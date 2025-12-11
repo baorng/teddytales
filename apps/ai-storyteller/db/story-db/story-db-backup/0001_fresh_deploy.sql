@@ -1,0 +1,2 @@
+-- Fresh deployment check - this will run after initial schema
+-- If this migration runs successfully, the deployment is working
