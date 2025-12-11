@@ -215,20 +215,53 @@ interface EnhancedStoryContext {
 
 // SmartMemory service for enhanced context management
 export class StoryMemoryService {
-  constructor(private memory: SmartMemory) {}
+  constructor(private memory: SmartMemory) {
+    // Simple in-memory cache for performance
+    this.contextCache = new Map<string, EnhancedStoryContext>();
+    this.cacheExpiry = new Map<string, number>();
+  }
+
+  private contextCache: Map<string, EnhancedStoryContext>;
+  private cacheExpiry: Map<string, number>;
+  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   async storeStoryContext(storyId: string, context: EnhancedStoryContext): Promise<void> {
-    // Use semantic memory for persistent story context
+    // Use semantic memory for persistent story context with direct key
     await this.memory.putSemanticMemory({
       storyId,
       context,
       timestamp: new Date().toISOString(),
       type: 'enhanced_story_context'
     });
+    
+    // Update cache
+    this.contextCache.set(storyId, context);
+    this.cacheExpiry.set(storyId, Date.now() + this.CACHE_TTL);
   }
 
   async getStoryContext(storyId: string): Promise<EnhancedStoryContext | null> {
-    // Search semantic memory for story context
+    // Check cache first
+    const cached = this.contextCache.get(storyId);
+    const expiry = this.cacheExpiry.get(storyId);
+    if (cached && expiry && Date.now() < expiry) {
+      return cached;
+    }
+
+    // Use direct key-based access instead of search for better performance
+    try {
+      const memoryResult = await this.memory.getSemanticMemory(`story-context-${storyId}`);
+      if (memoryResult.success && memoryResult.document) {
+        const context = memoryResult.document.context as EnhancedStoryContext;
+        // Cache the result
+        this.contextCache.set(storyId, context);
+        this.cacheExpiry.set(storyId, Date.now() + this.CACHE_TTL);
+        return context;
+      }
+    } catch (error) {
+      console.log('Story context not found for direct key access, falling back to search:', storyId);
+    }
+    
+    // Fallback to search only if direct access fails
     const searchResult = await this.memory.searchSemanticMemory(storyId);
     
     if (searchResult.success && 
@@ -239,7 +272,11 @@ export class StoryMemoryService {
         const objectId = topResult.chunkSignature;
         const memoryResult = await this.memory.getSemanticMemory(objectId);
         if (memoryResult.success && memoryResult.document) {
-          return memoryResult.document.context as EnhancedStoryContext;
+          const context = memoryResult.document.context as EnhancedStoryContext;
+          // Cache the result
+          this.contextCache.set(storyId, context);
+          this.cacheExpiry.set(storyId, Date.now() + this.CACHE_TTL);
+          return context;
         }
       }
     }

@@ -211,12 +211,13 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
       request.lesson_of_day
     );
 
-    // Store child preferences in SmartMemory for future sessions
-    await memoryService.storeChildPreferences(request.child_name, {
-      age: request.age,
-      favorite_themes: request.theme ? [request.theme] : [],
-      lessons: request.lesson_of_day ? [request.lesson_of_day] : []
-    });
+    // COMPELTELY DISABLED: Store child preferences in SmartMemory for future sessions
+    // SmartMemory indexing takes 8+ seconds per request, making start-story too slow
+    // await memoryService.storeChildPreferences(request.child_name, {
+    //   age: request.age,
+    //   favorite_themes: request.theme ? [request.theme] : [],
+    //   lessons: request.lesson_of_day ? [request.lesson_of_day] : []
+    // });
 
     // Generate initial story segment using AI (SmartInference via AI interface)
     const prompt = StoryPrompts.generateInitialStoryPrompt(request);
@@ -284,23 +285,25 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
       0
     );
 
-    // Initialize enhanced story context in SmartMemory
-    await memoryService.initializeStoryContext(
-      storyId.toString(),
-      request.child_name,
-      request.age,
-      request.theme,
-      request.lesson_of_day
-    );
+    // COMPELTELY DISABLED: Initialize enhanced story context in SmartMemory
+    // SmartMemory indexing takes 8+ seconds per request, making start-story too slow
+    // await memoryService.initializeStoryContext(
+    //   storyId.toString(),
+    //   request.child_name,
+    //   request.age,
+    //   request.theme,
+    //   request.lesson_of_day
+    // );
 
-    // Add the first segment to enhanced memory context
-    await memoryService.addStorySegment(storyId.toString(), {
-      order: 0,
-      text: storyData.story_text,
-      choice_question: storyData.choice_question || '',
-      audio_url: `/get-audio/${audioKey}`,
-      created_at: new Date().toISOString()
-    });
+    // COMPELTELY DISABLED: Add the first segment to enhanced memory context
+    // SmartMemory indexing takes 8+ seconds per request, making start-story too slow
+    // await memoryService.addStorySegment(storyId.toString(), {
+    //   order: 0,
+    //   text: storyData.story_text,
+    //   choice_question: storyData.choice_question || '',
+    //   audio_url: `/get-audio/${audioKey}`,
+    //   created_at: new Date().toISOString()
+    // });
 
     const response: StorySegmentResponse = {
       story_id: storyId,
