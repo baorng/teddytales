@@ -12,7 +12,7 @@ application "ai-storyteller" {
 
   // Configuration
   env "STORY_MODEL" {
-    default = "llama-3-8b-instruct"
+    default = "llama-3.1-8b-instant"
   }
 
   env "TTS_VOICE_ID" {

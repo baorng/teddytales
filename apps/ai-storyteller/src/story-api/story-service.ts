@@ -35,45 +35,69 @@ export class StoryPrompts {
     const ageGroup = this.getAgeGroup(request.age);
     return `Write a short story for ${request.child_name}, age ${request.age}, theme: ${request.theme || 'adventure'}.
 
-Keep it simple, 100 words max. End with a choice between two options.
+IMPORTANT: You MUST use the name "${request.child_name}" throughout the story. Do NOT use other names like "Emma" or "Timmy".
+
+Keep it simple, 100 words max. End with a clear choice between two options.
 
 Format:
-STORY: [story text]
-CHOICE: [Should ${request.child_name} do A or B?]`;
+STORY: [story text about ${request.child_name}]
+CHOICE: Should ${request.child_name} [short option A] or [short option B]?`;
   }
 
   static generateContinuationPrompt(
     childName: string,
     age: number,
-    previousText: string,
-    choice: string,
-    segmentOrder: number
+    fullStoryHistory: string,
+    currentChoice: string,
+    segmentOrder: number,
+    narrativeArc: any
   ): string {
-    const ageGroup = this.getAgeGroup(age);
     const isConclusion = segmentOrder >= 2; // Simple 2-3 segment stories
 
     if (isConclusion) {
-      return `Continue the story for ${childName}, age ${age}.
+      return `You are continuing an interactive story for ${childName}, age ${age}.
 
-Previous: "${previousText}"
-Choice made: "${choice}"
+${fullStoryHistory}
 
-Write a short ending (50 words max) based on the choice. Do not repeat the choice in your response.
+Current choice made: "${currentChoice}"
+
+IMPORTANT: You MUST use the name "${childName}" throughout the continuation. Do NOT use other names like "Emma" or "Timmy".
+
+Story context to remember:
+- Main character: ${childName}
+- Other characters: ${narrativeArc.characters_introduced.join(', ')}
+- Locations: ${narrativeArc.locations_visited.join(', ')}
+- Story tone: ${narrativeArc.story_tone}
+- Themes: ${narrativeArc.themes_explored.join(', ')}
+
+Write a short ending (50 words max) based on the current choice. Bring the story to a satisfying conclusion that references the journey so far. Do not repeat the choice in your response.
 
 Format:
-STORY: [ending text]
+STORY: [ending text about ${childName}]
 CHOICE: null`;
     } else {
-      return `Continue the story for ${childName}, age ${age}.
+      return `You are continuing an interactive story for ${childName}, age ${age}.
 
-Previous: "${previousText}" 
-Choice: "${choice}"
+${fullStoryHistory}
 
-Write what happens next (100 words max). Do not repeat the choice text in your response. End with a new choice.
+Current choice made: "${currentChoice}"
+
+IMPORTANT: You MUST use the name "${childName}" throughout the continuation. Do NOT use other names like "Emma" or "Timmy".
+
+Story context to remember:
+- Main character: ${childName}
+- Other characters: ${narrativeArc.characters_introduced.join(', ')}
+- Locations visited: ${narrativeArc.locations_visited.join(', ')}
+- Key events so far: ${narrativeArc.key_events.join(', ')}
+- Current situation: ${narrativeArc.current_situation}
+- Story tone: ${narrativeArc.story_tone}
+- Themes: ${narrativeArc.themes_explored.join(', ')}
+
+Write what happens next (100 words max). Reference previous events and locations to create continuity. Introduce a new development that offers ${childName} an interesting decision. Do not repeat the choice text in your response. End with a new choice.
 
 Format:
-STORY: [continuation text]
-CHOICE: [Should ${childName} do A or B?]`;
+STORY: [continuation text about ${childName}]
+CHOICE: Should ${childName} [short option A] or [short option B]?`;
     }
   }
 

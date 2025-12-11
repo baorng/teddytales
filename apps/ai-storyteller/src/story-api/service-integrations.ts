@@ -129,17 +129,23 @@ export class StoryDatabaseService {
     choiceQuestion: string | null,
     segmentOrder: number
   ): Promise<number> {
-    await this.db.executeQuery({
+    console.log('Creating story segment with story_id:', storyId);
+    
+    // Use RETURNING id for more reliable ID retrieval
+    const insertResult = await this.db.executeQuery({
       textQuery: `INSERT INTO story_segments (story_id, segment_text, audio_url, choice_question, segment_order) 
-                   VALUES (${storyId}, '${segmentText.replace(/'/g, "''")}', '${audioUrl}', ${choiceQuestion ? `'${choiceQuestion}'` : 'NULL'}, ${segmentOrder})`
-    });
-
-    const idResult = await this.db.executeQuery({
-      textQuery: 'SELECT last_insert_rowid() as id'
+                   VALUES (${storyId}, '${segmentText.replace(/'/g, "''")}', '${audioUrl}', ${choiceQuestion ? `'${choiceQuestion}'` : 'NULL'}, ${segmentOrder})
+                   RETURNING id`
     });
     
-    const parsedResult = JSON.parse(idResult.results || '[]');
-    return parsedResult[0]?.id || 0;
+    console.log('Insert result with RETURNING:', insertResult);
+
+    // Parse the returned ID from the results
+    const parsedResult = JSON.parse(insertResult.results || '[]');
+    const segmentId = parsedResult[0]?.id || 0;
+    console.log('Parsed segment ID:', segmentId);
+    
+    return segmentId;
   }
 
   async getStorySegment(segmentId: number): Promise<any> {
@@ -184,21 +190,52 @@ export class StoryDatabaseService {
   }
 }
 
-// SmartMemory service for context management
+// Enhanced story context structure for complete LLM memory
+interface StorySegment {
+  order: number;
+  text: string;
+  choice_question: string;
+  choice_made?: string;
+  audio_url: string;
+  created_at: string;
+}
+
+interface NarrativeArc {
+  characters_introduced: string[];
+  locations_visited: string[];
+  key_events: string[];
+  current_situation: string;
+  story_tone: string;
+  themes_explored: string[];
+}
+
+interface EnhancedStoryContext {
+  child_name: string;
+  age: number;
+  theme: string;
+  lesson_of_day?: string;
+  segments: StorySegment[];
+  narrative_arc: NarrativeArc;
+  total_choices_made: number;
+  story_started_at: string;
+  last_updated: string;
+}
+
+// SmartMemory service for enhanced context management
 export class StoryMemoryService {
   constructor(private memory: SmartMemory) {}
 
-  async storeStoryContext(storyId: string, context: any): Promise<void> {
+  async storeStoryContext(storyId: string, context: EnhancedStoryContext): Promise<void> {
     // Use semantic memory for persistent story context
     await this.memory.putSemanticMemory({
       storyId,
       context,
       timestamp: new Date().toISOString(),
-      type: 'story_context'
+      type: 'enhanced_story_context'
     });
   }
 
-  async getStoryContext(storyId: string): Promise<any> {
+  async getStoryContext(storyId: string): Promise<EnhancedStoryContext | null> {
     // Search semantic memory for story context
     const searchResult = await this.memory.searchSemanticMemory(storyId);
     
@@ -210,12 +247,180 @@ export class StoryMemoryService {
         const objectId = topResult.chunkSignature;
         const memoryResult = await this.memory.getSemanticMemory(objectId);
         if (memoryResult.success && memoryResult.document) {
-          return memoryResult.document.context;
+          return memoryResult.document.context as EnhancedStoryContext;
         }
       }
     }
     
     return null;
+  }
+
+  async addStorySegment(
+    storyId: string, 
+    segment: StorySegment, 
+    choiceMade?: string
+  ): Promise<void> {
+    const context = await this.getStoryContext(storyId);
+    if (!context) {
+      throw new Error(`Story context not found for story ID: ${storyId}`);
+    }
+
+    // Add the new segment
+    if (choiceMade) {
+      segment.choice_made = choiceMade;
+    }
+    context.segments.push(segment);
+
+    // Update narrative arc
+    this.updateNarrativeArc(context, segment);
+
+    // Update metadata
+    context.total_choices_made = context.segments.filter(s => s.choice_made).length;
+    context.last_updated = new Date().toISOString();
+
+    // Store the updated context
+    await this.storeStoryContext(storyId, context);
+  }
+
+  private updateNarrativeArc(context: EnhancedStoryContext, segment: StorySegment): void {
+    const text = segment.text.toLowerCase();
+    
+    // Extract characters (simple pattern matching)
+    const characterPatterns = [
+      /\b([A-Z][a-z]+)\b/g, // Proper nouns
+      /\b(the |a )?(\w+(?: wizard|dragon|fairy|princess|king|queen|knight|monster|friend|animal|cat|dog|bird))/g
+    ];
+
+    characterPatterns.forEach(pattern => {
+      const matches = text.match(pattern);
+      if (matches) {
+        matches.forEach(match => {
+          const name = match.replace(/^(the |a )/, '').trim();
+          if (name.length > 2 && !context.narrative_arc.characters_introduced.includes(name)) {
+            context.narrative.arc.characters_introduced.push(name);
+          }
+        });
+      }
+    });
+
+    // Extract locations
+    const locationPatterns = [
+      /\b(forest|castle|cave|mountain|river|ocean|garden|house|village|kingdom|school|park|tower|bridge|path|road|valley|island|lake|desert|jungle|city|town|market|shop|store|library|kitchen|bedroom|living room|backyard|playground)\b/g
+    ];
+
+    locationPatterns.forEach(pattern => {
+      const matches = text.match(pattern);
+      if (matches) {
+        matches.forEach(match => {
+          if (!context.narrative_arc.locations_visited.includes(match)) {
+            context.narrative_arc.locations_visited.push(match);
+          }
+        });
+      }
+    });
+
+    // Extract key events (action words and significant moments)
+    const eventPatterns = [
+      /\b(discovered|found|met|rescued|saved|helped|fought|escaped|climbed|flew|swam|ran|jumped|danced|sang|laughed|cried|celebrated|won|lost|learned|taught|built|created|transformed|magically|suddenly|finally|at last)\b/g
+    ];
+
+    const events = text.match(eventPatterns) || [];
+    events.forEach(event => {
+      if (!context.narrative_arc.key_events.includes(event)) {
+        context.narrative_arc.key_events.push(event);
+      }
+    });
+
+    // Update current situation (last few sentences of the latest segment)
+    const sentences = segment.text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    if (sentences.length > 0) {
+      const lastSentences = sentences.slice(-2).join('. ').trim();
+      context.narrative_arc.current_situation = lastSentences;
+    }
+
+    // Update story tone based on content
+    const positiveWords = ['happy', 'excited', 'beautiful', 'magical', 'wonderful', 'amazing', 'fun', 'joy', 'love', 'friend', 'help', 'kind'];
+    const adventurousWords = ['adventure', 'explore', 'journey', 'quest', 'discover', 'brave', 'courage', 'hero'];
+    const mysteriousWords = ['mysterious', 'secret', 'hidden', 'unknown', 'puzzle', 'riddle', 'curious'];
+
+    const positiveCount = positiveWords.filter(word => text.includes(word)).length;
+    const adventurousCount = adventurousWords.filter(word => text.includes(word)).length;
+    const mysteriousCount = mysteriousWords.filter(word => text.includes(word)).length;
+
+    if (positiveCount > adventurousCount && positiveCount > mysteriousCount) {
+      context.narrative_arc.story_tone = 'positive';
+    } else if (adventurousCount > mysteriousCount) {
+      context.narrative_arc.story_tone = 'adventurous';
+    } else if (mysteriousCount > 0) {
+      context.narrative_arc.story_tone = 'mysterious';
+    }
+
+    // Track themes
+    const themes = ['friendship', 'courage', 'kindness', 'adventure', 'magic', 'learning', 'family', 'nature', 'animals'];
+    themes.forEach(theme => {
+      if (text.includes(theme) && !context.narrative_arc.themes_explored.includes(theme)) {
+        context.narrative_arc.themes_explored.push(theme);
+      }
+    });
+  }
+
+  async initializeStoryContext(
+    storyId: string,
+    childName: string,
+    age: number,
+    theme?: string,
+    lessonOfDay?: string
+  ): Promise<void> {
+    const context: EnhancedStoryContext = {
+      child_name: childName,
+      age: age,
+      theme: theme || 'adventure',
+      lesson_of_day: lessonOfDay,
+      segments: [],
+      narrative_arc: {
+        characters_introduced: [childName], // Child is always the main character
+        locations_visited: [],
+        key_events: [],
+        current_situation: `Story beginning for ${childName}`,
+        story_tone: 'positive',
+        themes_explored: theme ? [theme] : []
+      },
+      total_choices_made: 0,
+      story_started_at: new Date().toISOString(),
+      last_updated: new Date().toISOString()
+    };
+
+    await this.storeStoryContext(storyId, context);
+  }
+
+  getFullStoryHistory(context: EnhancedStoryContext): string {
+    if (context.segments.length === 0) {
+      return `Story for ${context.child_name} is just beginning.`;
+    }
+
+    let history = `Complete story for ${context.child_name} (age ${context.age}, theme: ${context.theme}):\n\n`;
+    
+    context.segments.forEach((segment, index) => {
+      history += `Segment ${index + 1}: ${segment.text}`;
+      if (segment.choice_made) {
+        history += `\nChoice made: ${segment.choice_made}`;
+      }
+      if (segment.choice_question && !segment.choice_made) {
+        history += `\nAvailable choice: ${segment.choice_question}`;
+      }
+      history += '\n\n';
+    });
+
+    // Add narrative summary
+    history += `Story Summary:\n`;
+    history += `- Characters: ${context.narrative_arc.characters_introduced.join(', ')}\n`;
+    history += `- Locations visited: ${context.narrative_arc.locations_visited.join(', ')}\n`;
+    history += `- Key events: ${context.narrative_arc.key_events.join(', ')}\n`;
+    history += `- Current situation: ${context.narrative_arc.current_situation}\n`;
+    history += `- Story tone: ${context.narrative_arc.story_tone}\n`;
+    history += `- Themes: ${context.narrative_arc.themes_explored.join(', ')}\n\n`;
+
+    return history;
   }
 
   async storeChildPreferences(childName: string, preferences: any): Promise<void> {

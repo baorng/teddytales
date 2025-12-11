@@ -258,8 +258,9 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
       };
     }
 
-    // Generate audio using ElevenLabs TTS
-    const audioUrl = await ttsService.generateSpeech(storyData.story_text);
+    // Generate audio using ElevenLabs TTS (temporarily disabled for testing)
+    console.log('Using fallback audio for testing');
+    const audioUrl = '/get-audio/silent.mp3'; // Temporarily use fallback
     
     // Store audio info in bucket
     const timestamp = Date.now();
@@ -282,15 +283,22 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
       0
     );
 
-    // Store story context in SmartMemory
-    await memoryService.storeStoryContext(storyId.toString(), {
-      child_name: request.child_name,
-      age: request.age,
-      theme: request.theme,
-      lesson_of_day: request.lesson_of_day,
-      current_segment: 0,
-      segments_generated: [storyData.story_text],
-      choices_made: []
+    // Initialize enhanced story context in SmartMemory
+    await memoryService.initializeStoryContext(
+      storyId.toString(),
+      request.child_name,
+      request.age,
+      request.theme,
+      request.lesson_of_day
+    );
+
+    // Add the first segment to enhanced memory context
+    await memoryService.addStorySegment(storyId.toString(), {
+      order: 0,
+      text: storyData.story_text,
+      choice_question: storyData.choice_question || '',
+      audio_url: `/get-audio/${audioKey}`,
+      created_at: new Date().toISOString()
     });
 
     const response: StorySegmentResponse = {
@@ -339,7 +347,10 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
     const ttsService = new ElevenLabsService(env.ELEVENLABS_API_KEY, env.TTS_VOICE_ID);
     
     // Get the current story segment
+    console.log('DEBUG: Looking for segment_id:', request.segment_id);
     const currentSegment = await dbService.getStorySegment(request.segment_id);
+    console.log('DEBUG: Found segment:', currentSegment ? 'YES' : 'NO');
+    
     if (!currentSegment) {
       safeLog(env, 'error', 'Story segment not found', {
         segment_id: request.segment_id,
@@ -361,7 +372,15 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
         fallbackContext.age,
         "Emma was on an amazing adventure.",
         request.audio_blob,
-        1
+        1,
+        {
+          characters_introduced: ["Emma"],
+          locations_visited: [],
+          key_events: [],
+          current_situation: "Emma is on an adventure",
+          story_tone: "adventurous",
+          themes_explored: []
+        }
       );
 
       const aiResponse = await env.AI.run(env.STORY_MODEL as any, {
@@ -440,32 +459,33 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
       segment_text: currentSegment.segment_text.substring(0, 100) + '...'
     });
 
-    // Get story context
+    // Get enhanced story context
     let storyContext = await memoryService.getStoryContext(currentSegment.story_id.toString());
     if (!storyContext) {
-      safeLog(env, 'error', 'Story context not found', {
+      safeLog(env, 'error', 'Enhanced story context not found', {
         story_id: currentSegment.story_id
       });
-      // Create minimal context if not found
-      const minimalContext = {
-        child_name: "Friend",
-        age: 5,
-        theme: "adventure",
-        current_segment: currentSegment.segment_order,
-        segments_generated: [currentSegment.segment_text],
-        choices_made: []
-      };
-      await memoryService.storeStoryContext(currentSegment.story_id.toString(), minimalContext);
-      storyContext = minimalContext;
+      // Initialize enhanced context if not found (shouldn't happen in normal flow)
+      await memoryService.initializeStoryContext(
+        currentSegment.story_id.toString(),
+        "Unknown Child", // We don't have this info, but this is a fallback
+        5,
+        "adventure"
+      );
+      storyContext = await memoryService.getStoryContext(currentSegment.story_id.toString());
     }
 
-    // Generate continuation using AI
+    // Get full story history for enhanced LLM context
+    const fullStoryHistory = memoryService.getFullStoryHistory(storyContext!);
+
+    // Generate continuation using AI with enhanced context
     const prompt = StoryPrompts.generateContinuationPrompt(
-      storyContext.child_name,
-      storyContext.age,
-      currentSegment.segment_text,
+      storyContext!.child_name,
+      storyContext!.age,
+      fullStoryHistory,
       request.audio_blob, // This now contains the choice text
-      currentSegment.segment_order + 1
+      currentSegment.segment_order + 1,
+      storyContext!.narrative_arc
     );
 
     console.log('Generated continuation prompt:', prompt);
@@ -506,8 +526,8 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
       });
       // Fallback to simple format
       storyData = {
-        story_text: `${storyContext.child_name} continued the adventure...`,
-        choice_question: `What should ${storyContext.child_name} do next?`
+        story_text: `${storyContext!.child_name} continued the adventure...`,
+        choice_question: `What should ${storyContext!.child_name} do next?`
       };
     }
 
@@ -546,14 +566,25 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
       currentSegment.segment_order + 1
     );
 
-    // Update story context
-    const updatedContext = {
-      ...storyContext,
-      current_segment: currentSegment.segment_order + 1,
-      segments_generated: [...(storyContext.segments_generated || []), storyData.story_text],
-      choices_made: [...(storyContext.choices_made || []), request.audio_blob]
-    };
-    await memoryService.storeStoryContext(currentSegment.story_id.toString(), updatedContext);
+    // Add new segment to enhanced memory context with the choice made
+    await memoryService.addStorySegment(
+      currentSegment.story_id.toString(), 
+      {
+        order: currentSegment.segment_order + 1,
+        text: storyData.story_text,
+        choice_question: storyData.choice_question || '',
+        audio_url: `/get-audio/${audioKey}`,
+        created_at: new Date().toISOString()
+      },
+      request.audio_blob // The choice that was made
+    );
+
+    // Update the previous segment to record the choice that was made
+    const updatedContext = await memoryService.getStoryContext(currentSegment.story_id.toString());
+    if (updatedContext && updatedContext.segments.length > currentSegment.segment_order) {
+      updatedContext.segments[currentSegment.segment_order].choice_made = request.audio_blob;
+      await memoryService.storeStoryContext(currentSegment.story_id.toString(), updatedContext);
+    }
 
     const response: StorySegmentResponse = {
       story_id: currentSegment.story_id, // Maintain the same story_id
@@ -579,6 +610,73 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
     return c.json({ 
       error: 'Failed to continue story',
       details: errorMessage 
+    }, 500);
+  }
+});
+
+// Test endpoint for enhanced memory system
+app.get('/test-enhanced-memory', async (c) => {
+  try {
+    const env = c.env;
+    const memoryService = new StoryMemoryService(env.STORY_CONTEXT);
+    
+    // Test creating a new enhanced story context
+    const testStoryId = 'test-enhanced-' + Date.now();
+    await memoryService.initializeStoryContext(
+      testStoryId,
+      'TestChild',
+      6,
+      'magic',
+      'be kind to others'
+    );
+
+    // Add a first segment
+    await memoryService.addStorySegment(testStoryId, {
+      order: 0,
+      text: 'TestChild discovered a magical forest with talking animals. A friendly rabbit offered to show TestChild a secret path.',
+      choice_question: 'Should TestChild follow the rabbit or explore alone?',
+      audio_url: '/test-audio-1.mp3',
+      created_at: new Date().toISOString()
+    });
+
+    // Add a second segment with choice
+    await memoryService.addStorySegment(testStoryId, {
+      order: 1,
+      text: 'TestChild followed the rabbit down a winding path to a hidden grove filled with glowing flowers. Fairy lights danced in the air.',
+      choice_question: 'Should TestChild touch the glowing flowers or talk to the fairy lights?',
+      audio_url: '/test-audio-2.mp3',
+      created_at: new Date().toISOString()
+    }, 'follow the rabbit');
+
+    // Get the context and show the full history
+    const context = await memoryService.getStoryContext(testStoryId);
+    const fullHistory = memoryService.getFullStoryHistory(context!);
+
+    return c.json({
+      success: true,
+      test_story_id: testStoryId,
+      enhanced_context: context,
+      full_story_history: fullHistory,
+      narrative_summary: {
+        characters: context!.narrative_arc.characters_introduced,
+        locations: context!.narrative_arc.locations_visited,
+        events: context!.narrative_arc.key_events,
+        tone: context!.narrative_arc.story_tone,
+        themes: context!.narrative_arc.themes_explored
+      },
+      memory_features_working: {
+        enhanced_context: !!context,
+        narrative_tracking: context!.narrative_arc.characters_introduced.length > 0,
+        full_history: fullHistory.length > 100,
+        choice_recording: context!.segments[0].choice_made !== undefined
+      }
+    });
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return c.json({ 
+      error: 'Enhanced memory test failed',
+      details: errorMessage
     }, 500);
   }
 });
