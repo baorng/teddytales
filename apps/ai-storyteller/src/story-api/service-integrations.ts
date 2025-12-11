@@ -89,35 +89,24 @@ export class StoryDatabaseService {
   async createStory(childName: string, age: number, theme?: string, lessonOfDay?: string): Promise<number> {
     console.log('Creating story:', { childName, age, theme, lessonOfDay });
     
-    // Generate a unique ID based on timestamp to avoid database issues
+    // Use timestamp as primary key to ensure uniqueness and trackability
     const timestampId = Date.now();
-    console.log('Generated timestamp ID:', timestampId);
     
     try {
-      // Use simple integer IDs instead of UUIDs for simplicity
+      // Insert with explicit ID to avoid SmartSQL complications
       const result = await this.db.executeQuery({
         textQuery: `INSERT INTO stories (id, child_name, age, theme, lesson_of_day) 
                      VALUES (${timestampId}, '${childName}', ${age}, ${theme ? `'${theme}'` : 'NULL'}, ${lessonOfDay ? `'${lessonOfDay}'` : 'NULL'})`
       });
       
-      console.log('Insert result:', result);
+      console.log('Story insert result:', result);
       
-      // Get the inserted story ID as integer
-      const idResult = await this.db.executeQuery({
-        textQuery: 'SELECT last_insert_rowid() as id'
-      });
-      
-      console.log('ID result:', idResult);
-      
-      const parsedResult = JSON.parse(idResult.results || '[]');
-      const storyId = parsedResult[0]?.id;
-      
-      console.log('Parsed story ID:', storyId);
-      
-      // If database fails, return the timestamp ID
-      return storyId || timestampId;
+      // Return the timestamp ID we used
+      console.log('Story ID (timestamp):', timestampId);
+      return timestampId;
     } catch (error) {
-      console.error('Database insert failed, using timestamp ID:', error);
+      console.error('Database insert failed:', error);
+      // Even on error, return the timestamp as fallback
       return timestampId;
     }
   }
@@ -131,21 +120,24 @@ export class StoryDatabaseService {
   ): Promise<number> {
     console.log('Creating story segment with story_id:', storyId);
     
-    // Use RETURNING id for more reliable ID retrieval
-    const insertResult = await this.db.executeQuery({
-      textQuery: `INSERT INTO story_segments (story_id, segment_text, audio_url, choice_question, segment_order) 
-                   VALUES (${storyId}, '${segmentText.replace(/'/g, "''")}', '${audioUrl}', ${choiceQuestion ? `'${choiceQuestion}'` : 'NULL'}, ${segmentOrder})
-                   RETURNING id`
-    });
+    // Use timestamp as primary key for consistency
+    const timestampId = Date.now() + segmentOrder; // Add segmentOrder to ensure uniqueness
     
-    console.log('Insert result with RETURNING:', insertResult);
-
-    // Parse the returned ID from the results
-    const parsedResult = JSON.parse(insertResult.results || '[]');
-    const segmentId = parsedResult[0]?.id || 0;
-    console.log('Parsed segment ID:', segmentId);
-    
-    return segmentId;
+    try {
+      // Insert with explicit ID
+      const result = await this.db.executeQuery({
+        textQuery: `INSERT INTO story_segments (id, story_id, segment_text, audio_url, choice_question, segment_order) 
+                     VALUES (${timestampId}, ${storyId}, '${segmentText.replace(/'/g, "''")}', '${audioUrl}', ${choiceQuestion ? `'${choiceQuestion}'` : 'NULL'}, ${segmentOrder})`
+      });
+      
+      console.log('Segment insert result:', result);
+      console.log('Segment ID (timestamp):', timestampId);
+      return timestampId;
+    } catch (error) {
+      console.error('Failed to create story segment:', error);
+      // Even on error, return the timestamp as fallback
+      return timestampId;
+    }
   }
 
   async getStorySegment(segmentId: number): Promise<any> {
@@ -260,9 +252,13 @@ export class StoryMemoryService {
     segment: StorySegment, 
     choiceMade?: string
   ): Promise<void> {
-    const context = await this.getStoryContext(storyId);
+    // Try to get existing context, but don't fail if SmartMemory isn't ready yet
+    let context = await this.getStoryContext(storyId);
+    
+    // If context doesn't exist, log warning and continue without memory context
     if (!context) {
-      throw new Error(`Story context not found for story ID: ${storyId}`);
+      console.log(`SmartMemory context not found for story ID: ${storyId}, skipping memory update`);
+      return; // Don't fail, just skip memory update
     }
 
     // Add the new segment
@@ -297,7 +293,7 @@ export class StoryMemoryService {
         matches.forEach(match => {
           const name = match.replace(/^(the |a )/, '').trim();
           if (name.length > 2 && !context.narrative_arc.characters_introduced.includes(name)) {
-            context.narrative.arc.characters_introduced.push(name);
+            context.narrative_arc.characters_introduced.push(name);
           }
         });
       }
@@ -324,7 +320,12 @@ export class StoryMemoryService {
       /\b(discovered|found|met|rescued|saved|helped|fought|escaped|climbed|flew|swam|ran|jumped|danced|sang|laughed|cried|celebrated|won|lost|learned|taught|built|created|transformed|magically|suddenly|finally|at last)\b/g
     ];
 
-    const events = text.match(eventPatterns) || [];
+    let events: string[] = [];
+    eventPatterns.forEach(pattern => {
+      const matches = text.match(pattern) || [];
+      events.push(...matches);
+    });
+    
     events.forEach(event => {
       if (!context.narrative_arc.key_events.includes(event)) {
         context.narrative_arc.key_events.push(event);
@@ -390,7 +391,13 @@ export class StoryMemoryService {
       last_updated: new Date().toISOString()
     };
 
-    await this.storeStoryContext(storyId, context);
+    try {
+      await this.storeStoryContext(storyId, context);
+      console.log(`SmartMemory context initialized for story ID: ${storyId}`);
+    } catch (error) {
+      console.error(`Failed to initialize SmartMemory context for story ID: ${storyId}:`, error);
+      // Don't fail the entire story creation if SmartMemory isn't ready
+    }
   }
 
   getFullStoryHistory(context: EnhancedStoryContext): string {

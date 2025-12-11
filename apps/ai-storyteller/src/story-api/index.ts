@@ -32,11 +32,12 @@ const app = new Hono<{ Bindings: Env }>();
 
 // Apply CORS middleware
 app.use('*', cors({
-  origin: '*',
+  origin: ['http://localhost:5173', 'https://ai-storyteller.01kc3t3yy6wkaq6mtc04d4jda0.lmapp.run'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   exposeHeaders: ['Content-Length'],
   maxAge: 86400,
+  credentials: true,
 }));
 
 // Apply request logging middleware
@@ -581,8 +582,8 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
 
     // Update the previous segment to record the choice that was made
     const updatedContext = await memoryService.getStoryContext(currentSegment.story_id.toString());
-    if (updatedContext && updatedContext.segments.length > currentSegment.segment_order) {
-      updatedContext.segments[currentSegment.segment_order].choice_made = request.audio_blob;
+    if (updatedContext && updatedContext.segments && updatedContext.segments.length > currentSegment.segment_order && updatedContext.segments[currentSegment.segment_order]) {
+      updatedContext.segments[currentSegment.segment_order]!.choice_made = request.audio_blob;
       await memoryService.storeStoryContext(currentSegment.story_id.toString(), updatedContext);
     }
 
@@ -662,13 +663,13 @@ app.get('/test-enhanced-memory', async (c) => {
         locations: context!.narrative_arc.locations_visited,
         events: context!.narrative_arc.key_events,
         tone: context!.narrative_arc.story_tone,
-        themes: context!.narrative_arc.themes_explored
+        themes: context?.narrative_arc.themes_explored || []
       },
       memory_features_working: {
         enhanced_context: !!context,
-        narrative_tracking: context!.narrative_arc.characters_introduced.length > 0,
+        narrative_tracking: (context?.narrative_arc?.characters_introduced?.length || 0) > 0,
         full_history: fullHistory.length > 100,
-        choice_recording: context!.segments[0].choice_made !== undefined
+        choice_recording: context?.segments?.[0]?.choice_made !== undefined
       }
     });
 
@@ -1094,7 +1095,7 @@ export default class extends Service<Env> {
     console.log('=== SERVICE CONSTRUCTOR DEBUG ===');
     console.log('env type:', typeof env);
     console.log('this.env type:', typeof this.env);
-    console.log('this.env has STORY_DB:', !!this.env.STORY_DB);
+    console.log('this.env has STORY_DB:', !!(env as any).STORY_DB_V2);
     console.log('this.env has AI:', !!this.env.AI);
     console.log('=== END CONSTRUCTOR DEBUG ===');
   }
@@ -1116,12 +1117,12 @@ export default class extends Service<Env> {
       return new Response(JSON.stringify({
         has_env: !!env,
         env_keys: env ? Object.keys(env) : [],
-        has_story_db: !!env.STORY_DB,
+        has_story_db: !!(env as any).STORY_DB_V2,
         has_ai: !!env.AI,
-        story_db_type: env.STORY_DB ? typeof env.STORY_DB : 'undefined',
+        story_db_type: (env as any).STORY_DB_V2 ? typeof (env as any).STORY_DB_V2 : 'undefined',
         ai_type: env.AI ? typeof env.AI : 'undefined',
         // Test if STORY_DB has executeQuery
-        story_db_has_executequery: env.STORY_DB ? typeof (env.STORY_DB as any).executeQuery : 'method check'
+        story_db_has_executequery: (env as any).STORY_DB_V2 ? typeof ((env as any).STORY_DB_V2 as any).executeQuery : 'method check'
       }), {
         headers: { 'Content-Type': 'application/json' }
       });

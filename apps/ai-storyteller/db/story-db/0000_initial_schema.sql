@@ -12,7 +12,7 @@ CREATE TABLE stories (
 
 -- Story segments table to track each part of the story
 CREATE TABLE story_segments (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INTEGER PRIMARY KEY,
   story_id INTEGER NOT NULL REFERENCES stories(id) ON DELETE CASCADE,
   segment_text TEXT NOT NULL,
   audio_url TEXT,
@@ -23,7 +23,7 @@ CREATE TABLE story_segments (
 
 -- Voice choices table to track child's spoken choices
 CREATE TABLE voice_choices (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  id INTEGER PRIMARY KEY,
   segment_id INTEGER NOT NULL REFERENCES story_segments(id) ON DELETE CASCADE,
   audio_url TEXT,
   transcribed_text TEXT,
