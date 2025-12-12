@@ -18,11 +18,16 @@ interface VultrInferenceResponse {
   };
 }
 
-export async function inference(prompt: string): Promise<VultrInferenceResponse | null> {
+export async function inference(
+  prompt: string
+): Promise<VultrInferenceResponse | null> {
   try {
     console.log("=== Vultr Inference Request ===");
     console.log("Prompt:", prompt);
-    console.log("API Key:", API_KEY ? `${API_KEY.substring(0, 10)}...` : "NOT SET");
+    console.log(
+      "API Key:",
+      API_KEY ? `${API_KEY.substring(0, 10)}...` : "NOT SET"
+    );
 
     const response = await fetch(
       "https://api.vultrinference.com/v1/chat/completions",
@@ -51,10 +56,10 @@ export async function inference(prompt: string): Promise<VultrInferenceResponse 
       return null;
     }
 
-    const data = await response.json() as VultrInferenceResponse;
+    const data = (await response.json()) as VultrInferenceResponse;
     console.log("Vultr Inference Success!");
     console.log("Response data:", JSON.stringify(data, null, 2));
-    
+
     if (data.choices && data.choices[0] && data.choices[0].message) {
       console.log("Content:", data.choices[0].message.content);
     }
@@ -68,7 +73,7 @@ export async function inference(prompt: string): Promise<VultrInferenceResponse 
     } else {
       console.error("Unknown error:", err);
     }
-    
+
     // Return null explicitly so callers can detect the error
     return null;
   }

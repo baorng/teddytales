@@ -265,9 +265,10 @@ app.post(
         if (storyMatch && storyMatch[1]) {
           storyData = {
             story_text: storyMatch[1].trim(),
-            choice_question: choiceMatch && choiceMatch[1]
-              ? choiceMatch[1].trim()
-              : `What should Emma do next?`,
+            choice_question:
+              choiceMatch && choiceMatch[1]
+                ? choiceMatch[1].trim()
+                : `What should Emma do next?`,
           };
         } else {
           // Fallback: use entire response as story
@@ -287,7 +288,7 @@ app.post(
         // Fallback to simple format
         storyData = {
           story_text:
-            (aiResponse.choices[0]?.message?.content) ||
+            aiResponse.choices[0]?.message?.content ||
             "Once upon a time, Emma went on an adventure!",
           choice_question: `What should ${"Emma"} do next?`,
         };
@@ -997,32 +998,41 @@ app.get("/test-ai", async (c) => {
 
     // Test with Vultr inference
     console.log("Testing Vultr inference...");
-    const aiResponse = await inference("Generate a very short children's story about Emma the explorer in 2 sentences.");
+    const aiResponse = await inference(
+      "Generate a very short children's story about Emma the explorer in 2 sentences."
+    );
 
     console.log("AI response type:", typeof aiResponse);
     console.log("AI response:", JSON.stringify(aiResponse, null, 2));
 
     // Check if response exists
     if (!aiResponse) {
-      return c.json({
-        status: "AI No Response",
-        error: "Inference function returned undefined - check server logs for errors",
-        model: "deepseek-r1-distill-qwen-32b",
-        timestamp: new Date().toISOString(),
-        note: "The inference() function likely encountered an error. Check console logs.",
-      }, 500);
+      return c.json(
+        {
+          status: "AI No Response",
+          error:
+            "Inference function returned undefined - check server logs for errors",
+          model: "deepseek-r1-distill-qwen-32b",
+          timestamp: new Date().toISOString(),
+          note: "The inference() function likely encountered an error. Check console logs.",
+        },
+        500
+      );
     }
 
     // Check if response is valid object
     if (typeof aiResponse !== "object") {
-      return c.json({
-        status: "AI Invalid Response Type",
-        ai_response: aiResponse,
-        response_type: typeof aiResponse,
-        model: "deepseek-r1-distill-qwen-32b",
-        timestamp: new Date().toISOString(),
-        note: "AI response is not a valid object",
-      }, 500);
+      return c.json(
+        {
+          status: "AI Invalid Response Type",
+          ai_response: aiResponse,
+          response_type: typeof aiResponse,
+          model: "deepseek-r1-distill-qwen-32b",
+          timestamp: new Date().toISOString(),
+          note: "AI response is not a valid object",
+        },
+        500
+      );
     }
 
     // Check for OpenAI chat format (Vultr returns this format)
