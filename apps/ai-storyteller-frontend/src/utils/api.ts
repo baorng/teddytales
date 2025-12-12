@@ -1,5 +1,5 @@
 // API client for AI Storyteller backend
-const API_BASE = 'https://ai-storyteller.01kc3t3yy6wkaq6mtc04d4jda0.lmapp.run';
+const API_BASE = 'https://ai-storyteller.01kc54r6ayz240zq9k7z4c7yxh.lmapp.run';
 const IMAGE_API_BASE = 'https://image.pollinations.ai/prompt';
 
 export interface StoryRequest {

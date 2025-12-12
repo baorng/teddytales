@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_KEY = "E4L3Q6C7CP7T4LPMETVQBYKMDM4XWALROFZQ";
 
-export async function inference(prompt: string) {
+export async function inference(prompt) {
   try {
     const res = await axios.post(
       "https://api.vultrinference.com/v1/chat/completions",
@@ -34,5 +34,5 @@ export async function inference(prompt: string) {
   }
 }
 
-await inference("tell me a short 20 word story")
+await inference("tell me a short 20 word story").response
 

@@ -255,7 +255,7 @@ interface NarrativeArc {
 }
 
 interface EnhancedStoryContext {
-  child_name: string;
+  char_name: string;
   age: number;
   theme: string;
   lesson_of_day?: string;
@@ -457,22 +457,22 @@ export class StoryMemoryService {
 
   async initializeStoryContext(
     storyId: string,
-    childName: string,
     age: number,
     theme?: string,
     lessonOfDay?: string
   ): Promise<void> {
+    const char_name = "Emma";
     const context: EnhancedStoryContext = {
-      child_name: childName,
+      char_name,
       age: age,
       theme: theme || 'adventure',
       lesson_of_day: lessonOfDay,
       segments: [],
       narrative_arc: {
-        characters_introduced: [childName], // Child is always the main character
+        characters_introduced: [char_name], // Child is always the main character
         locations_visited: [],
         key_events: [],
-        current_situation: `Story beginning for ${childName}`,
+        current_situation: `Story beginning for ${char_name}`,
         story_tone: 'positive',
         themes_explored: theme ? [theme] : []
       },
@@ -492,7 +492,7 @@ export class StoryMemoryService {
 
   getFullStoryHistory(context: EnhancedStoryContext): string {
     if (context.segments.length === 0) {
-      return `Story for ${context.child_name} is just beginning.`;
+      return `Story for Emma is just beginning.`;
     }
 
     let history = `Complete story for a child (age ${context.age}, theme: ${context.theme}):\n\n`;

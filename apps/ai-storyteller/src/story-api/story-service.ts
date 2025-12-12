@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Request/Response schemas for type safety
 export const StartStoryRequestSchema = z.object({
-  // child_name: z.string().min(1, 'Child name is required'),
+  // char_name: z.string().min(1, 'Child name is required'),
   age: z.number().min(1, 'Age must be at least 1').max(12, 'Age must be at most 12'),
   theme: z.string().optional(),
   lesson_of_day: z.string().optional()

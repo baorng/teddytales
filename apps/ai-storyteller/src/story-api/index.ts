@@ -33,7 +33,7 @@ const app = new Hono<{ Bindings: Env }>();
 
 // Apply CORS middleware
 app.use('*', cors({
-  origin: ['http://localhost:5173', 'https://ai-storyteller.01kc3t3yy6wkaq6mtc04d4jda0.lmapp.run'],
+  origin: ['http://localhost:5173', 'https://ai-storyteller.01kc54r6ayz240zq9k7z4c7yxh.lmapp.run'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   exposeHeaders: ['Content-Length'],
@@ -226,14 +226,18 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
       prompt
     );
 
+      // const aiResponse = await env.AI.run(env.STORY_MODEL as any, {
+      //   prompt: prompt
+      // });
+
     if (!aiResponse || !aiResponse.response) {
       throw new Error('AI model returned invalid response');
     }
 
     let storyData;
     try {
-      // const content = aiResponse.response;
-      const content = aiResponse;
+      const content = aiResponse.response;
+      // const content = aiResponse;
       // Parse simplified format: STORY: [text] CHOICE: [question]
       const storyMatch = content.match(/STORY:\s*(.+?)(?=CHOICE:|$)/s);
       const choiceMatch = content.match(/CHOICE:\s*(.+)/s);
@@ -473,7 +477,6 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
       // Initialize enhanced context if not found (shouldn't happen in normal flow)
       await memoryService.initializeStoryContext(
         currentSegment.story_id.toString(),
-        "Unknown Child", // We don't have this info, but this is a fallback
         5,
         "adventure"
       );
@@ -530,8 +533,8 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
       });
       // Fallback to simple format
       storyData = {
-        story_text: `${storyContext!.child_name} continued the adventure...`,
-        choice_question: `What should ${storyContext!.child_name} do next?`
+        story_text: `${storyContext!.char_name} continued the adventure...`,
+        choice_question: `What should ${storyContext!.char_name} do next?`
       };
     }
 
@@ -628,7 +631,6 @@ app.get('/test-enhanced-memory', async (c) => {
     const testStoryId = 'test-enhanced-' + Date.now();
     await memoryService.initializeStoryContext(
       testStoryId,
-      'TestChild',
       6,
       'magic',
       'be kind to others'

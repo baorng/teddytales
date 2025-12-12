@@ -2,7 +2,7 @@ application "ai-storyteller-frontend" {
 
   // === Environment Variables ===
   env "API_BASE_URL" {
-    default = "https://ai-storyteller.01kc3c918xkfv1z281re82g2sz.lmapp.run"
+    default = "https://ai-storyteller.01kc54r6ayz240zq9k7z4c7yxh.lmapp.run"
   }
 
   // === Storage ===
