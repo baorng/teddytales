@@ -1,146 +1,251 @@
-# 🎭 AI Storyteller Frontend - Hackathon Demo
+# 🎨 TeddyTales Frontend
+
+The React-based frontend for TeddyTales - Stories that grow with your child.
 
 ## 🚀 Quick Start
 
-The frontend is now ready for the hackathon demo!
-
-### **Development Server**
 ```bash
-cd apps/ai-storyteller-frontend
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
-```
-Server runs at: http://localhost:5173
 
-## ✨ What's Built
-
-### **🎯 2-Page Demo Flow**
-1. **Welcome Page** - Beautiful landing with feature highlights
-2. **Story Creation** - Simple form to create personalized stories
-3. **Story Display** - Shows story text with audio playback
-
-### **🛠️ Features Working**
-- ✅ React + TypeScript + Vite setup
-- ✅ Tailwind CSS with playful child-friendly design
-- ✅ Framer Motion animations
-- ✅ API integration with backend
-- ✅ Audio player component
-- ✅ Loading states
-- ✅ Responsive design
-- ✅ Form validation
-- ✅ Story creation flow
-
-### **🎨 Design Elements**
-- **Colors**: Bright primary colors (blue, purple, pink, yellow, green)
-- **Typography**: Comic Neue for story text, Fredoka One for headers
-- **Animations**: Bounce, wiggle, sparkle effects
-- **Layout**: Clean, simple, child-friendly
-
-## 🔗 API Integration
-
-The frontend connects to the production backend:
-```
-https://ai-storyteller.01kc3c918xkfv1z281re82g2sz.lmapp.run
-```
-
-### **Working Endpoints**
-- `POST /start-story` - Creates new story with audio
-- `GET /get-audio/:audioKey` - Streams audio narration
-- `GET /health/services` - Service status
-
-## 🎯 Demo Script (3 minutes)
-
-1. **Welcome Screen** (30s)
-   - Show the beautiful landing page
-   - Highlight AI magic, audio narration, interactive choices
-
-2. **Story Creation** (45s)
-   - Enter child's name: "Emma"
-   - Select age: 5 years old
-   - Choose theme: "Adventure"
-   - Click "Start My Story!"
-
-3. **Story Display** (60s)
-   - Story appears with beautiful typography
-   - Audio player with play/pause controls
-   - Show the choice question
-   - Demonstrate professional audio narration
-
-4. **Technical Highlights** (45s)
-   - Explain Raindrop backend integration
-   - Show ElevenLabs TTS audio quality
-   - Mention Vultr services integration
-   - Discuss scalability and deployment
-
-## 🏆 Hackathon Success Factors
-
-### **✅ Complete Integration**
-- Frontend + Backend fully connected
-- Real API calls working
-- Audio streaming functional
-- Error handling implemented
-
-### **✅ Production Ready**
-- Clean, maintainable code
-- TypeScript for type safety
-- Component architecture
-- Responsive design
-
-### **✅ User Experience**
-- Child-friendly interface
-- Smooth animations
-- Intuitive navigation
-- Delightful interactions
-
-### **✅ Technical Excellence**
-- Modern React patterns
-- Proper API integration
-- Performance optimized
-- Production deployment ready
-
-## 🚀 Deployment Options
-
-### **Option 1: Static Hosting (Recommended for Demo)**
-```bash
+# Build for production
 npm run build
-# Deploy dist/ to Vercel, Netlify, or GitHub Pages
+
+# Preview production build
+npm run preview
 ```
 
-### **Option 2: Raindrop Deployment**
+## 🌐 Live Demo
+
+**Production**: [https://teddytales.vercel.app/](https://teddytales.vercel.app/)
+
+## 🛠️ Tech Stack
+
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Animations**: Framer Motion
+- **HTTP Client**: Axios
+- **Deployment**: Vercel
+
+## 📂 Project Structure
+
+```
+src/
+├── components/
+│   ├── AudioPlayer.tsx          # Audio playback controls
+│   ├── BackgroundMusic.tsx      # Background music component
+│   ├── ChoiceButtons.tsx        # Interactive story choices
+│   ├── Decorations.tsx          # Visual decorative elements
+│   ├── LoadingAnimation.tsx     # Loading states
+│   ├── StoryCreationForm.tsx    # Story input form
+│   ├── StoryDisplay.tsx         # Story text display
+│   └── StoryEnding.tsx          # Story conclusion screen
+├── utils/
+│   └── api.ts                   # API client for backend
+├── App.tsx                      # Main application component
+├── main.tsx                     # Application entry point
+└── index.css                    # Global styles
+```
+
+## 🔌 API Integration
+
+The frontend connects to the TeddyTales backend API:
+
+```typescript
+// src/utils/api.ts
+const API_BASE = "https://ai-storyteller.01kc54r6ayz240zq9k7z4c7yxh.lmapp.run";
+
+export const StoryAPI = {
+  async createStory(request: StoryRequest): Promise<StoryResponse> {
+    const response = await fetch(`${API_BASE}/start-story`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+    });
+    return response.json();
+  },
+  
+  async continueStory(
+    segmentId: number,
+    choice: string,
+    segmentOrder: number
+  ): Promise<StoryResponse> {
+    const response = await fetch(`${API_BASE}/continue-story`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ segment_id: segmentId, audio_blob: choice, segment_order: segmentOrder }),
+    });
+    return response.json();
+  },
+};
+```
+
+## 🎨 Design System
+
+### Color Palette
+- **Cream**: `#FEF3C7` - Warm background
+- **Brown**: `#78350F` - Text and borders
+- **Sage**: `#10B981` - Success/nature themes
+- **Sunset**: `#F59E0B` - Primary actions
+- **Sky**: `#3B82F6` - Interactive elements
+
+### Typography
+- **Story Text**: Crimson Text (serif)
+- **UI Labels**: Quicksand (sans-serif)
+- **Headings**: Caveat (handwritten)
+- **Decorative**: Patrick Hand (casual)
+
+### Animations
+- Page transitions with Framer Motion
+- Loading spinners and pulses
+- Button hover effects
+- Smooth entry/exit animations
+
+## 🧩 Key Components
+
+### StoryCreationForm
+Collects child information and story preferences:
+- Child's name (required)
+- Age (3-12 years)
+- Theme selection (adventure, fantasy, etc.)
+- English level (optional)
+- Lesson of the day (optional)
+
+### StoryDisplay
+Shows the generated story with:
+- Formatted story text
+- AI-generated illustration
+- Audio player for narration
+- Choice buttons for interaction
+
+### AudioPlayer
+Custom audio controls:
+- Play/pause functionality
+- Progress bar
+- Volume control
+- Stylized UI matching storybook theme
+
+### ChoiceButtons
+Interactive decision points:
+- Visual feedback on hover
+- Disabled state during loading
+- Animated selection
+- Clear choice text
+
+## 📱 Responsive Design
+
+The app is fully responsive across devices:
+- **Desktop**: Full-width story display with sidebar
+- **Tablet**: Adapted layout with touch-friendly controls
+- **Mobile**: Single-column layout, optimized for reading
+
+## 🔧 Development
+
+### Environment Variables
 ```bash
-raindrop deploy
-# Uses the raindrop.manifest configuration
+# .env.local (optional)
+VITE_API_BASE_URL=http://localhost:8787  # For local development
 ```
 
-## 🎨 Customization for Demo
+### Available Scripts
+- `npm run dev` - Start dev server (port 5173)
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Lint code (if configured)
 
-### **Easy Changes**
-- Update colors in `tailwind.config.js`
-- Modify themes in `StoryCreationForm.tsx`
-- Add new pages/components as needed
-- Customize animations in `App.tsx`
+### Hot Module Replacement
+Vite provides instant HMR - changes appear immediately without full reload.
 
-### **Quick Theme Examples**
-```javascript
-// In StoryCreationForm.tsx themes array
-{ id: 'dinosaurs', name: 'Dinosaurs', emoji: '🦕', color: 'bg-green-500' }
-{ id: 'underwater', name: 'Underwater', emoji: '🐠', color: 'bg-blue-500' }
-{ id: 'robots', name: 'Robots', emoji: '🤖', color: 'bg-gray-500' }
+## 🚀 Deployment
+
+### Deploy to Vercel
+
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy to production
+npx vercel --prod
 ```
 
-## 🎯 Next Steps (Post-Hackathon)
+The `vercel.json` configuration handles:
+- Framework detection (Vite)
+- Build commands
+- SPA routing (rewrites to index.html)
+- Static asset caching
 
-- [ ] Add choice continuation logic
-- [ ] Implement story history
-- [ ] Add voice input (Vultr STT)
-- [ ] Create parent dashboard
-- [ ] Add offline caching
-- [ ] Implement user accounts
+### Build Output
+```
+dist/
+├── index.html
+├── assets/
+│   ├── index-[hash].js
+│   ├── index-[hash].css
+│   └── [other assets]
+└── [other static files]
+```
+
+## 🐛 Common Issues
+
+### API Connection Errors
+- Verify backend URL in `src/utils/api.ts`
+- Check CORS configuration on backend
+- Ensure backend is running and accessible
+
+### Audio Playback Issues
+- Check browser console for errors
+- Verify audio URL format
+- Ensure proper MIME type from backend (`audio/mpeg`)
+
+### Image Loading Delays
+- Images are generated on-demand from Pollinations.ai
+- First load may take 2-3 seconds
+- Subsequent loads are cached
+
+## 📚 Additional Documentation
+
+- **Main README**: See `/README.md` for project overview
+- **API Documentation**: See `/apps/ai-storyteller/API.md`
+- **Technology Stack**: See `/TECHNOLOGY.md` for detailed tech info
+- **Contributing**: See `/CONTRIBUTING.md` for contribution guidelines
+- **Submission Info**: See `/SUBMISSION.md` for hackathon details
+
+## 🎯 Features
+
+### Current Features
+- ✅ Story creation with personalization
+- ✅ Professional audio narration
+- ✅ AI-generated illustrations
+- ✅ Interactive story choices
+- ✅ Beautiful storybook-themed UI
+- ✅ Responsive design
+- ✅ Loading states and error handling
+
+### Planned Features
+- [ ] Story history and bookmarks
+- [ ] Multiple voice options
+- [ ] Printable story pages
+- [ ] Story sharing functionality
+- [ ] Parent dashboard
+- [ ] Multi-language support
+
+## 🙏 Credits
+
+Built with:
+- React team for the excellent framework
+- Vite team for the blazing-fast build tool
+- Tailwind CSS for the utility-first styling
+- Framer Motion for smooth animations
+- Pollinations.ai for image generation
+
+## 📄 License
+
+This project is part of TeddyTales and is licensed under the MIT License - see the [LICENSE](../../LICENSE) file for details.
 
 ---
 
-**Status**: 🎉 **HACKATHON READY!**  
-**Demo Time**: 3 minutes  
-**Wow Factor**: ✨ **HIGH**  
-**Technical Depth**: 🚀 **IMPRESSIVE**  
-
-**Let's win this hackathon! 🏆**
+**Part of TeddyTales** - Stories that grow with your child 🎭📚✨

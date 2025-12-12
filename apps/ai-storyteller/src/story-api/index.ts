@@ -42,7 +42,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://ai-storyteller.01kc406nq36jnxt1fzzcs08aac.lmapp.run",
+      "https://ai-storyteller.01kc54r6ayz240zq9k7z4c7yxh.lmapp.run",
+      "https://teddytales.vercel.app",
       "https://api.vultrinference.com/v1/chat/completions",
     ],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
