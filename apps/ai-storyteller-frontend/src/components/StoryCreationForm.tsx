@@ -21,6 +21,7 @@ export const StoryCreationForm: React.FC<{
 }> = ({ onStoriesGenerated }) => {
   const [childName, setChildName] = useState("");
   const [age, setAge] = useState("");
+  const [proficiencyLevel, setProficiencyLevel] = useState("");
   const [selectedTheme, setSelectedTheme] = useState("adventure");
   const [lessonOfDay, setLessonOfDay] = useState("");
   const [loading, setLoading] = useState(false);
@@ -116,6 +117,29 @@ export const StoryCreationForm: React.FC<{
                 {a} years old
               </option>
             ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="flex items-center gap-2 text-xl font-bold text-earth-800 mb-3 font-display">
+            <span className="text-2xl">📖</span>
+            English Level
+            <span className="text-sm font-normal text-earth-500 ml-2">
+              (Optional)
+            </span>
+          </label>
+          <select
+            value={proficiencyLevel}
+            onChange={(e) => setProficiencyLevel(e.target.value)}
+            className="w-full px-6 py-4 text-lg rounded-xl border-2 border-earth-300 focus:outline-none focus:border-sky-400 focus:ring-4 focus:ring-sky-100 bg-white shadow-page font-display transition-all"
+          >
+            <option value="">Choose a level...</option>
+            <option value="beginner">Beginner - Learning basic words</option>
+            <option value="elementary">Elementary - Simple sentences</option>
+            <option value="intermediate">
+              Intermediate - Comfortable reading
+            </option>
+            <option value="advanced">Advanced - Rich vocabulary</option>
           </select>
         </div>
 
