@@ -9,43 +9,61 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes wiggle {
-  0%, 100% { transform: rotate(-2deg); }
-  50% { transform: rotate(2deg); }
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
 }
 
 @keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
 }
 
 @keyframes page-turn {
-  0% { transform: perspective(1000px) rotateY(0deg); }
-  100% { transform: perspective(1000px) rotateY(-180deg); }
+  0% {
+    transform: perspective(1000px) rotateY(0deg);
+  }
+  100% {
+    transform: perspective(1000px) rotateY(-180deg);
+  }
 }
 
 /* Storybook page texture */
 .page-texture {
-  background-image: 
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(139, 92, 46, 0.03) 2px,
-      rgba(139, 92, 46, 0.03) 4px
-    );
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(139, 92, 46, 0.03) 2px,
+    rgba(139, 92, 46, 0.03) 4px
+  );
 }
 
 /* Paper shadow effect */
 .paper-shadow {
-  box-shadow: 
-    0 1px 3px rgba(139, 92, 46, 0.12),
-    0 1px 2px rgba(139, 92, 46, 0.08),
-    inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 1px 3px rgba(139, 92, 46, 0.12),
+    0 1px 2px rgba(139, 92, 46, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 /* Hand-drawn border */
@@ -54,7 +72,7 @@
 }
 
 .story-text {
-  font-family: 'Crimson Text', serif;
+  font-family: "Crimson Text", serif;
   font-size: 1.375rem;
   line-height: 2;
   color: #422006;
@@ -67,21 +85,21 @@
   float: left;
   line-height: 0.9;
   margin: 0.1rem 0.5rem 0 0;
-  color: #92400E;
+  color: #92400e;
 }
 
 .storybook-button {
   @apply relative px-8 py-4 text-lg font-semibold rounded-lg transform transition-all duration-300;
   @apply shadow-[0_4px_0_0_rgba(0,0,0,0.15)] active:shadow-[0_2px_0_0_rgba(0,0,0,0.15)];
   @apply active:translate-y-[2px];
-  font-family: 'Quicksand', sans-serif;
+  font-family: "Quicksand", sans-serif;
 }
 
 .heading-handwritten {
-  font-family: 'Caveat', cursive;
+  font-family: "Caveat", cursive;
   letter-spacing: 0.02em;
 }
 
 .text-handwritten {
-  font-family: 'Patrick Hand', cursive;
+  font-family: "Patrick Hand", cursive;
 }

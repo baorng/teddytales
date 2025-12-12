@@ -3,16 +3,19 @@
 ## Quick Start
 
 1. **Navigate to the frontend directory:**
+
    ```bash
    cd apps/ai-storyteller-frontend
    ```
 
 2. **Install dependencies (if not already done):**
+
    ```bash
    npm install
    ```
 
 3. **Start the development server:**
+
    ```bash
    npm run dev
    ```
@@ -23,13 +26,16 @@
 ## What's New
 
 ### Visual Changes
+
 - **New Storybook Theme**: Warm, earthy colors that evoke classic children's books
 - **Professional Typography**: Custom fonts for headings, body text, and decorative elements
 - **Book-Inspired Design**: Page textures, corner ornaments, and paper-like shadows
 - **Refined Animations**: Subtle, purposeful movements instead of bouncy effects
 
 ### Design Philosophy
+
 The redesign focuses on:
+
 - ✅ Looking handcrafted, not AI-generated
 - ✅ Creating a warm, inviting atmosphere
 - ✅ Professional polish with attention to detail
@@ -38,6 +44,7 @@ The redesign focuses on:
 ## Key Improvements
 
 ### Color Palette
+
 - Cream tones for backgrounds (warm paper feel)
 - Earth browns for text and borders
 - Sage greens for nature themes
@@ -45,12 +52,14 @@ The redesign focuses on:
 - Sky blues and lavenders for accents
 
 ### Typography
+
 - **Crimson Text**: Story content (classic serif)
 - **Quicksand**: UI labels and buttons (friendly sans-serif)
 - **Caveat**: Handwritten headings (script)
 - **Patrick Hand**: Casual decorative text
 
 ### Components Updated
+
 1. **Welcome Page**: Book-themed landing with corner ornaments
 2. **Story Form**: Elegant input fields with warm focus states
 3. **Story Selection**: Each option styled as a mini book page
@@ -70,6 +79,7 @@ If you encounter issues:
 ## Next Steps
 
 Consider these enhancements:
+
 - Add more decorative SVG illustrations
 - Create animated page transitions
 - Add sound effects for interactions

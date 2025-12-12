@@ -1,6 +1,7 @@
 # Animation Glitch Fix - Complete
 
 ## Problem
+
 The image loading and display had a really bad glitchy animation, especially after the image finished loading. The frame was zooming in and out unnecessarily, creating a jarring user experience.
 
 ## Root Causes Identified
@@ -16,6 +17,7 @@ The image loading and display had a really bad glitchy animation, especially aft
 ### 1. **Removed All Scale/Zoom Animations**
 
 #### Before:
+
 ```tsx
 <motion.div
   key="placeholder"
@@ -39,6 +41,7 @@ The image loading and display had a really bad glitchy animation, especially aft
 ```
 
 #### After:
+
 ```tsx
 <div
   key="placeholder"
@@ -59,24 +62,26 @@ The image loading and display had a really bad glitchy animation, especially aft
 ### 2. **Simplified Story Text Display**
 
 #### Before:
+
 ```tsx
-{contentAnimated ? (
-  <div>{story.segment_text}</div>
-) : (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.9 }}
-    animate={{ opacity: 1, scale: 1 }}
-  >
-    {story.segment_text}
-  </motion.div>
-)}
+{
+  contentAnimated ? (
+    <div>{story.segment_text}</div>
+  ) : (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+    >
+      {story.segment_text}
+    </motion.div>
+  );
+}
 ```
 
 #### After:
+
 ```tsx
-<div>
-  {story.segment_text}
-</div>
+<div>{story.segment_text}</div>
 // ✅ Always static, no conditional animations
 ```
 
@@ -92,6 +97,7 @@ The image loading and display had a really bad glitchy animation, especially aft
 ### 4. **Kept Only Essential Animations**
 
 The loading placeholder still has smooth, non-glitchy animations:
+
 - ✅ Gentle pulsing background colors
 - ✅ Smooth rotating circles
 - ✅ Subtle twinkling sparkles
@@ -102,21 +108,25 @@ But NO zoom/scale effects on any containers or frames.
 ## Result
 
 ✅ **No more glitchy zoom animations**
+
 - Image appears smoothly without jarring scale effects
 - Frame stays stable, no zooming in/out
 - Sparkle decoration appears without popping
 
 ✅ **Cleaner, more professional feel**
+
 - Smooth transitions only where needed
 - Static content stays static
 - Predictable, stable UI behavior
 
 ✅ **Better performance**
+
 - Less animation calculations
 - Fewer state updates
 - Cleaner component lifecycle
 
 ✅ **Improved user experience**
+
 - Content feels solid and stable
 - No distracting zoom effects
 - Professional, polished appearance

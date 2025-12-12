@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React from "react";
+import { motion } from "framer-motion";
 
 export const LoadingAnimation: React.FC = () => {
   return (
@@ -12,16 +12,16 @@ export const LoadingAnimation: React.FC = () => {
         />
         <motion.div
           className="absolute inset-0 flex items-center justify-center text-4xl"
-          animate={{ 
+          animate={{
             scale: [1, 1.2, 1],
-            rotate: [0, 180, 360]
+            rotate: [0, 180, 360],
           }}
           transition={{ duration: 2, repeat: Infinity }}
         >
           ✨
         </motion.div>
       </div>
-      
+
       <motion.div
         className="mt-8 text-center"
         initial={{ opacity: 0, y: 10 }}

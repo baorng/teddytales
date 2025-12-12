@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { Play, Pause, Volume2 } from "lucide-react";
 
 interface AudioPlayerProps {
   audioUrl: string;
   autoPlay?: boolean;
 }
 
-export const AudioPlayer: React.FC<AudioPlayerProps> = ({ 
-  audioUrl, 
-  autoPlay = false 
+export const AudioPlayer: React.FC<AudioPlayerProps> = ({
+  audioUrl,
+  autoPlay = false,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -21,15 +21,15 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       // Stop current playback
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      
+
       // Reset states
       setIsPlaying(false);
       setCurrentTime(0);
       setDuration(0);
-      
+
       // Load new audio
       audioRef.current.load();
-      
+
       // Auto-play new audio if enabled
       if (autoPlay) {
         setTimeout(() => {
@@ -78,30 +78,38 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />
-      
+
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-lavender-100 rounded-lg">
             <Volume2 className="w-6 h-6 text-lavender-600" />
           </div>
-          <span className="text-lg font-semibold text-earth-800 font-display">Listen to Your Story</span>
+          <span className="text-lg font-semibold text-earth-800 font-display">
+            Listen to Your Story
+          </span>
         </div>
-        
+
         <button
           onClick={togglePlay}
           className="storybook-button bg-gradient-to-r from-lavender-400 to-lavender-500 hover:from-lavender-500 hover:to-lavender-600 text-white flex items-center gap-2"
         >
-          {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+          {isPlaying ? (
+            <Pause className="w-5 h-5" />
+          ) : (
+            <Play className="w-5 h-5" />
+          )}
           <span className="font-display font-semibold">
-            {isPlaying ? 'Pause' : 'Play'}
+            {isPlaying ? "Pause" : "Play"}
           </span>
         </button>
       </div>
 
       <div className="bg-earth-200 rounded-full h-3 overflow-hidden shadow-inner">
-        <div 
+        <div
           className="bg-gradient-to-r from-lavender-400 to-lavender-500 h-3 rounded-full transition-all duration-300 shadow-sm"
-          style={{ width: duration > 0 ? `${(currentTime / duration) * 100}%` : '0%' }}
+          style={{
+            width: duration > 0 ? `${(currentTime / duration) * 100}%` : "0%",
+          }}
         />
       </div>
     </div>

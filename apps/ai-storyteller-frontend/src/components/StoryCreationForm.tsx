@@ -123,7 +123,9 @@ export const StoryCreationForm: React.FC<{
           <label className="flex items-center gap-2 text-xl font-bold text-earth-800 mb-3 font-display">
             <span className="text-2xl">💡</span>
             Story's Lesson
-            <span className="text-sm font-normal text-earth-500 ml-2">(Optional)</span>
+            <span className="text-sm font-normal text-earth-500 ml-2">
+              (Optional)
+            </span>
           </label>
           <textarea
             value={lessonOfDay}

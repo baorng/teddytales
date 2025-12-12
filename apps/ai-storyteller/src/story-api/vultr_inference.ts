@@ -1,5 +1,5 @@
 // Using native fetch API instead of axios for Cloudflare Workers compatibility
-const API_KEY = "E4L3Q6C7CP7T4LPMETVQBYKMDM4XWALROFZQ";
+const API_KEY = "UCWE4Z23MIRB5JK3NYMFQY4OBHUMMBDM3KXA";
 
 interface VultrInferenceResponse {
   choices: Array<{

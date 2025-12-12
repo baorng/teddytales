@@ -424,12 +424,22 @@ app.post(
           theme: "adventure",
         };
 
+        // Use the segment_order from request, or default to 1
+        const nextSegmentOrder = (request.segment_order ?? 0) + 1;
+        const shouldConclude = nextSegmentOrder >= 2; // Conclude at part 3 (segment_order 2)
+
+        console.log(
+          `Generating part ${
+            nextSegmentOrder + 1
+          }, should conclude: ${shouldConclude}`
+        );
+
         // Generate continuation using AI even without database
         const prompt = StoryPrompts.generateContinuationPrompt(
           fallbackContext.age,
           "Emma was on an amazing adventure.",
           request.audio_blob,
-          1,
+          nextSegmentOrder,
           {
             characters_introduced: ["Emma"],
             locations_visited: [],
@@ -509,8 +519,8 @@ app.post(
           segment_text: storyData.story_text,
           audio_url: `/get-audio/${audioKey}`,
           choice_question: storyData.choice_question,
-          segment_order: 1,
-          is_conclusion: !storyData.choice_question,
+          segment_order: nextSegmentOrder,
+          is_conclusion: !storyData.choice_question || shouldConclude,
         };
 
         return c.json(fallbackResponse);

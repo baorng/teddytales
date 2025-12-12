@@ -1,24 +1,26 @@
-import { useEffect, useRef, useState } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface BackgroundMusicProps {
   autoPlay?: boolean;
 }
 
-export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ autoPlay = false }) => {
+export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({
+  autoPlay = false,
+}) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
 
   // Using local background music file
-  const musicUrl = '/bg_music.mp3';
+  const musicUrl = "/bg_music.mp3";
 
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.3; // Set to 30% volume for background
       audioRef.current.loop = true;
-      
+
       if (autoPlay) {
         // Try to play, but handle autoplay restrictions
         const playPromise = audioRef.current.play();
@@ -56,7 +58,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ autoPlay = fal
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <audio ref={audioRef} src={musicUrl} />
-      
+
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -67,7 +69,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ autoPlay = fal
           className="p-4 bg-cream-50 backdrop-blur-sm rounded-2xl shadow-book hover:shadow-lg transition-all border-2 border-earth-300"
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
-          title={isPlaying ? 'Pause music' : 'Play background music'}
+          title={isPlaying ? "Pause music" : "Play background music"}
         >
           {isPlaying ? (
             <motion.div
@@ -90,7 +92,7 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ autoPlay = fal
             className="p-3 bg-cream-50 backdrop-blur-sm rounded-2xl shadow-book hover:shadow-lg transition-all border-2 border-earth-300"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
-            title={isMuted ? 'Unmute' : 'Mute'}
+            title={isMuted ? "Unmute" : "Mute"}
           >
             {isMuted ? (
               <VolumeX className="w-6 h-6 text-earth-600" />

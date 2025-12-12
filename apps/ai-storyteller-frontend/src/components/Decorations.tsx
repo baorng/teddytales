@@ -40,7 +40,11 @@ export const FloatingStars = () => {
   );
 };
 
-export const BookmarkDecoration = ({ side = "left" }: { side?: "left" | "right" }) => {
+export const BookmarkDecoration = ({
+  side = "left",
+}: {
+  side?: "left" | "right";
+}) => {
   return (
     <div
       className={`absolute top-0 ${
@@ -62,7 +66,11 @@ export const PageCurl = ({ corner = "top-right" }: { corner?: string }) => {
   };
 
   return (
-    <div className={`absolute ${positions[corner as keyof typeof positions]} w-0 h-0`}>
+    <div
+      className={`absolute ${
+        positions[corner as keyof typeof positions]
+      } w-0 h-0`}
+    >
       <div
         className="w-12 h-12 bg-gradient-to-br from-earth-200 to-earth-300 opacity-50"
         style={{
@@ -80,7 +88,11 @@ export const PageCurl = ({ corner = "top-right" }: { corner?: string }) => {
   );
 };
 
-export const DoodleDecoration = ({ className = "" }: { className?: string }) => {
+export const DoodleDecoration = ({
+  className = "",
+}: {
+  className?: string;
+}) => {
   return (
     <motion.div
       className={`absolute ${className}`}

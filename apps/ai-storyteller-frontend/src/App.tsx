@@ -26,11 +26,22 @@ function App() {
     setStory(selectedStory);
     setImageLoaded(false);
     setCurrentView("story");
+    // Initialize segment tracking in localStorage
+    localStorage.setItem("current_segment_order", "0");
   };
 
   const handleChoiceMade = (newStory: StoryResponse) => {
     console.log("Choice made callback:", newStory);
-    setStory(newStory);
+    // Increment segment tracking in localStorage (frontend manages this, not backend)
+    const currentOrder = parseInt(
+      localStorage.getItem("current_segment_order") || "0"
+    );
+    const nextOrder = currentOrder + 1;
+    localStorage.setItem("current_segment_order", nextOrder.toString());
+
+    // Update the story object with the correct segment_order from frontend
+    const updatedStory = { ...newStory, segment_order: nextOrder };
+    setStory(updatedStory);
     setImageLoaded(false);
     setLoading(false);
   };
@@ -40,6 +51,8 @@ function App() {
     setImageLoaded(false);
     setLoading(false);
     setCurrentView("create");
+    // Clear segment tracking
+    localStorage.removeItem("current_segment_order");
   };
 
   const WelcomePage = () => (
@@ -118,12 +131,13 @@ function App() {
           >
             📚
           </motion.div>
-          
+
           <h2 className="text-3xl md:text-4xl font-bold text-earth-800 mb-4 font-display">
             Craft Magical Adventures
           </h2>
           <p className="text-lg md:text-xl text-earth-600 mb-10 font-display">
-            Personalized stories that inspire imagination and teach valuable lessons
+            Personalized stories that inspire imagination and teach valuable
+            lessons
           </p>
 
           <div className="grid md:grid-cols-3 gap-6 mb-10">
@@ -133,9 +147,12 @@ function App() {
               className="p-6 bg-gradient-to-br from-lavender-50 to-lavender-100 rounded-xl shadow-page border border-lavender-200"
             >
               <Sparkles className="w-14 h-14 text-lavender-600 mx-auto mb-3" />
-              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">AI-Powered Magic</h3>
+              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">
+                AI-Powered Magic
+              </h3>
               <p className="text-sm text-earth-600 font-display">
-                Unique stories tailored to your child's interests and learning goals
+                Unique stories tailored to your child's interests and learning
+                goals
               </p>
             </motion.div>
 
@@ -145,7 +162,9 @@ function App() {
               className="p-6 bg-gradient-to-br from-sunset-50 to-sunset-100 rounded-xl shadow-page border border-sunset-200"
             >
               <Volume2 className="w-14 h-14 text-sunset-600 mx-auto mb-3" />
-              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">Listen & Learn</h3>
+              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">
+                Listen & Learn
+              </h3>
               <p className="text-sm text-earth-600 font-display">
                 Professional narration brings every adventure to life
               </p>
@@ -157,7 +176,9 @@ function App() {
               className="p-6 bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl shadow-page border border-sky-200"
             >
               <Wand2 className="w-14 h-14 text-sky-600 mx-auto mb-3" />
-              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">Your Choices Matter</h3>
+              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">
+                Your Choices Matter
+              </h3>
               <p className="text-sm text-earth-600 font-display">
                 Interactive storytelling where kids shape the adventure
               </p>
@@ -248,7 +269,11 @@ function App() {
                 <span className="text-4xl">✨</span>
               </motion.div>
               <div className="text-lg text-earth-500 font-display">
-                Chapter {story.story_id}
+                Part{" "}
+                {parseInt(
+                  localStorage.getItem("current_segment_order") || "0"
+                ) + 1}{" "}
+                of 3
               </div>
             </div>
 
@@ -378,11 +403,9 @@ function App() {
                     />
                   )}
                 </AnimatePresence>
-                
+
                 {imageLoaded && (
-                  <div className="absolute -bottom-2 -right-2 text-3xl">
-                    ✨
-                  </div>
+                  <div className="absolute -bottom-2 -right-2 text-3xl">✨</div>
                 )}
               </div>
             </div>
@@ -422,7 +445,9 @@ function App() {
           whileHover={{ scale: 1.02, x: -5 }}
         >
           <span className="text-xl mr-2">←</span>
-          <span className="font-display font-semibold">Create Different Stories</span>
+          <span className="font-display font-semibold">
+            Create Different Stories
+          </span>
         </motion.button>
 
         <motion.div
@@ -445,22 +470,22 @@ function App() {
                 bg: "from-sky-50 to-sky-100",
                 border: "border-sky-300",
                 accent: "bg-sky-500",
-                icon: "🌟"
+                icon: "🌟",
               },
               {
                 bg: "from-lavender-50 to-lavender-100",
                 border: "border-lavender-300",
                 accent: "bg-lavender-500",
-                icon: "✨"
+                icon: "✨",
               },
               {
                 bg: "from-sunset-50 to-sunset-100",
                 border: "border-sunset-300",
                 accent: "bg-sunset-500",
-                icon: "💫"
+                icon: "💫",
               },
             ];
-            
+
             const theme = themes[index];
             const preview =
               storyOption.segment_text.substring(0, 180) +
@@ -472,23 +497,34 @@ function App() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.15 }}
-                whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
+                whileHover={{
+                  y: -8,
+                  transition: { type: "spring", stiffness: 300 },
+                }}
                 className={`bg-gradient-to-br ${theme.bg} page-texture rounded-2xl shadow-book border-2 ${theme.border} p-6 md:p-8 cursor-pointer group relative`}
                 onClick={() => handleStorySelected(storyOption)}
               >
                 {/* Page corner */}
                 <div className="absolute top-0 right-0 w-0 h-0 border-t-[40px] border-t-earth-200 border-l-[40px] border-l-transparent opacity-50"></div>
-                
+
                 <div className="text-center mb-6">
                   <motion.div
                     className="text-5xl mb-3"
                     animate={{ rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
                   >
                     {theme.icon}
                   </motion.div>
-                  <div className={`inline-block ${theme.accent} text-white px-4 py-2 rounded-lg mb-2`}>
-                    <span className="font-display font-bold text-lg">Tale {index + 1}</span>
+                  <div
+                    className={`inline-block ${theme.accent} text-white px-4 py-2 rounded-lg mb-2`}
+                  >
+                    <span className="font-display font-bold text-lg">
+                      Tale {index + 1}
+                    </span>
                   </div>
                 </div>
 

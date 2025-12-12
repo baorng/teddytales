@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { StoryAPI } from '../utils/api';
-import { type StoryResponse } from '../utils/api';
+import React from "react";
+import { motion } from "framer-motion";
+import { StoryAPI } from "../utils/api";
+import { type StoryResponse } from "../utils/api";
 
 interface ChoiceButtonsProps {
   story: StoryResponse;
@@ -9,38 +9,83 @@ interface ChoiceButtonsProps {
   loading: boolean;
 }
 
-export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({ 
-  story, 
-  onChoiceMade, 
-  loading 
+export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
+  story,
+  onChoiceMade,
+  loading,
 }) => {
   const handleChoice = async (choice: string) => {
-    console.log('Choice clicked:', choice);
-    console.log('Story data:', story);
-    
-    try {
-      // Use the StoryAPI continue-story method
-      const newStory = await StoryAPI.continueStory(story.segment_id, choice);
+    console.log("Choice clicked:", choice);
+    console.log("Story data:", story);
 
-      console.log('New story data:', newStory);
+    try {
+      // Get current segment order from localStorage
+      const currentSegmentOrder = parseInt(
+        localStorage.getItem("current_segment_order") || "0"
+      );
+      console.log(
+        "Current segment order from localStorage:",
+        currentSegmentOrder
+      );
+
+      // Pass segment_order so backend knows when to conclude (max 3 parts)
+      const newStory = await StoryAPI.continueStory(
+        story.segment_id,
+        choice,
+        currentSegmentOrder
+      );
+
+      console.log("New story data:", newStory);
       onChoiceMade(newStory);
     } catch (error) {
-      console.error('Failed to continue story:', error);
-      alert(`Oops! Something went wrong: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error("Failed to continue story:", error);
+      alert(
+        `Oops! Something went wrong: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     }
   };
 
   if (!story.choice_question || story.is_conclusion) {
-    return null;
+    // Show ending message with moral of the story
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-center p-8 md:p-10 bg-gradient-to-br from-sunset-50 via-lavender-50 to-sky-50 rounded-xl border-2 border-earth-300 shadow-page relative"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          className="text-6xl mb-4"
+        >
+          🌟
+        </motion.div>
+        <h3 className="text-4xl font-bold text-earth-800 mb-4 heading-handwritten">
+          The End
+        </h3>
+        <p className="text-xl text-earth-700 mb-6 font-display italic">
+          What a wonderful adventure! 📖✨
+        </p>
+        <div className="bg-cream-50/90 backdrop-blur-sm rounded-xl p-6 border-2 border-earth-300">
+          <p className="text-lg text-earth-600 font-display leading-relaxed">
+            Every choice we make shapes our story. Remember to be brave, kind,
+            and curious! 💫
+          </p>
+        </div>
+      </motion.div>
+    );
   }
 
   // Extract choices from the question (improved parsing)
   const question = story.choice_question;
-  
+
   // Try different patterns for choice extraction
-  let choiceA = 'Continue exploring';
-  let choiceB = 'Try something new';
-  
+  let choiceA = "Continue exploring";
+  let choiceB = "Try something new";
+
   // Pattern 1: "Should [name] [A] or [B]?"
   const shouldMatch = question.match(/Should\s+\w+\s+(.+?)\s+or\s+(.+?)\?/i);
   if (shouldMatch) {
@@ -57,7 +102,7 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
       const splitOr = question.split(/\s+or\s+/i);
       if (splitOr.length === 2) {
         choiceA = splitOr[0].trim();
-        choiceB = splitOr[1].trim().replace(/[?.!]+$/, ''); // Remove punctuation
+        choiceB = splitOr[1].trim().replace(/[?.!]+$/, ""); // Remove punctuation
       }
     }
   }
@@ -70,11 +115,11 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
     >
       {/* Decorative corner */}
       <div className="absolute top-0 right-0 w-0 h-0 border-t-[30px] border-t-earth-200 border-l-[30px] border-l-transparent opacity-60"></div>
-      
+
       <h3 className="text-3xl font-bold text-earth-800 mb-4 heading-handwritten">
         What Happens Next?
       </h3>
-      
+
       <p className="text-xl text-earth-700 mb-8 font-display leading-relaxed max-w-2xl mx-auto">
         {question}
       </p>
@@ -95,7 +140,9 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
           ) : (
             <span className="flex items-center justify-center gap-3 px-2">
               <span className="text-3xl">👈</span>
-              <span className="font-display font-semibold text-left flex-1">{choiceA}</span>
+              <span className="font-display font-semibold text-left flex-1">
+                {choiceA}
+              </span>
             </span>
           )}
         </motion.button>
@@ -115,7 +162,9 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
           ) : (
             <span className="flex items-center justify-center gap-3 px-2">
               <span className="text-3xl">👉</span>
-              <span className="font-display font-semibold text-left flex-1">{choiceB}</span>
+              <span className="font-display font-semibold text-left flex-1">
+                {choiceB}
+              </span>
             </span>
           )}
         </motion.button>
