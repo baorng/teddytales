@@ -66,63 +66,68 @@ export const ChoiceButtons: React.FC<ChoiceButtonsProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="text-center p-8 bg-gradient-to-r from-primary-purple/20 to-primary-pink/20 rounded-2xl border-2 border-primary-purple"
+      className="text-center p-8 md:p-10 bg-gradient-to-br from-lavender-50 to-sky-50 rounded-xl border-2 border-earth-300 shadow-page relative"
     >
-      <h3 className="text-2xl font-bold text-gray-800 mb-6">🤔 What should happen next?</h3>
+      {/* Decorative corner */}
+      <div className="absolute top-0 right-0 w-0 h-0 border-t-[30px] border-t-earth-200 border-l-[30px] border-l-transparent opacity-60"></div>
       
-      <p className="text-xl text-gray-700 font-semibold mb-8">
+      <h3 className="text-3xl font-bold text-earth-800 mb-4 heading-handwritten">
+        What Happens Next?
+      </h3>
+      
+      <p className="text-xl text-earth-700 mb-8 font-display leading-relaxed max-w-2xl mx-auto">
         {question}
       </p>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-6">
+      <div className="grid md:grid-cols-2 gap-6 mb-6 max-w-3xl mx-auto">
         <motion.button
           onClick={() => handleChoice(choiceA)}
           disabled={loading}
-          className="playful-button bg-gradient-to-r from-primary-blue to-primary-green text-white text-lg disabled:opacity-50"
-          whileHover={{ scale: loading ? 1 : 1.05 }}
-          whileTap={{ scale: loading ? 1 : 0.95 }}
+          className="storybook-button bg-gradient-to-br from-sky-400 to-sky-500 hover:from-sky-500 hover:to-sky-600 text-white text-lg disabled:opacity-50 disabled:cursor-not-allowed min-h-[80px] flex items-center justify-center"
+          whileHover={{ scale: loading ? 1 : 1.03, y: loading ? 0 : -3 }}
+          whileTap={{ scale: loading ? 1 : 0.98 }}
         >
           {loading ? (
-            <span className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-              Creating...
+            <span className="flex items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <span className="font-display">Continuing...</span>
             </span>
           ) : (
-            <>
-              <span className="text-2xl mr-2">👈</span>
-              {choiceA}
-            </>
+            <span className="flex items-center justify-center gap-3 px-2">
+              <span className="text-3xl">👈</span>
+              <span className="font-display font-semibold text-left flex-1">{choiceA}</span>
+            </span>
           )}
         </motion.button>
 
         <motion.button
           onClick={() => handleChoice(choiceB)}
           disabled={loading}
-          className="playful-button bg-gradient-to-r from-primary-yellow to-primary-orange text-white text-lg disabled:opacity-50"
-          whileHover={{ scale: loading ? 1 : 1.05 }}
-          whileTap={{ scale: loading ? 1 : 0.95 }}
+          className="storybook-button bg-gradient-to-br from-sunset-400 to-sunset-500 hover:from-sunset-500 hover:to-sunset-600 text-white text-lg disabled:opacity-50 disabled:cursor-not-allowed min-h-[80px] flex items-center justify-center"
+          whileHover={{ scale: loading ? 1 : 1.03, y: loading ? 0 : -3 }}
+          whileTap={{ scale: loading ? 1 : 0.98 }}
         >
           {loading ? (
-            <span className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-              Creating...
+            <span className="flex items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              <span className="font-display">Continuing...</span>
             </span>
           ) : (
-            <>
-              <span className="text-2xl mr-2">👉</span>
-              {choiceB}
-            </>
+            <span className="flex items-center justify-center gap-3 px-2">
+              <span className="text-3xl">👉</span>
+              <span className="font-display font-semibold text-left flex-1">{choiceB}</span>
+            </span>
           )}
         </motion.button>
       </div>
 
       {loading && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-gray-600 text-sm"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-earth-600 text-lg font-display italic"
         >
-          The story is continuing... ✨
+          The tale continues... ✨
         </motion.div>
       )}
     </motion.div>

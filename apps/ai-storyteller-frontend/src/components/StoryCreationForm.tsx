@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Wand2 } from "lucide-react";
 import { StoryAPI, type StoryRequest, type StoryResponse } from "../utils/api";
 
 const themes = [
-  { id: "adventure", name: "Adventure", emoji: "🗺️", color: "bg-primary-blue" },
-  { id: "space", name: "Space", emoji: "🚀", color: "bg-primary-purple" },
-  { id: "magic", name: "Magic", emoji: "✨", color: "bg-primary-pink" },
-  { id: "animals", name: "Animals", emoji: "🦁", color: "bg-primary-green" },
+  { id: "adventure", name: "Adventure", emoji: "🗺️", color: "bg-sage-500" },
+  { id: "space", name: "Space", emoji: "🚀", color: "bg-sky-500" },
+  { id: "magic", name: "Magic", emoji: "✨", color: "bg-lavender-500" },
+  { id: "animals", name: "Animals", emoji: "🦁", color: "bg-sage-600" },
   {
     id: "friendship",
     name: "Friendship",
     emoji: "👫",
-    color: "bg-primary-yellow",
+    color: "bg-sunset-500",
   },
 ];
 
@@ -65,45 +66,51 @@ export const StoryCreationForm: React.FC<{
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto p-8 bg-gradient-to-br from-storybook-bg to-white rounded-3xl shadow-xl border-4 border-storybook-accent"
+      className="max-w-3xl mx-auto p-8 md:p-12 bg-cream-50 page-texture rounded-2xl shadow-book border-2 border-earth-300 relative"
     >
-      <h2
-        className="text-4xl font-bold text-center mb-8 text-gray-800"
-        style={{ fontFamily: "Fredoka One, cursive" }}
-      >
-        🎭 Create Your Magical Story! ✨
-      </h2>
+      {/* Decorative book corners */}
+      <div className="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-earth-400 rounded-tl-2xl opacity-40"></div>
+      <div className="absolute top-0 right-0 w-16 h-16 border-t-4 border-r-4 border-earth-400 rounded-tr-2xl opacity-40"></div>
+      <div className="absolute bottom-0 left-0 w-16 h-16 border-b-4 border-l-4 border-earth-400 rounded-bl-2xl opacity-40"></div>
+      <div className="absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 border-earth-400 rounded-br-2xl opacity-40"></div>
 
-      <p className="text-center text-gray-600 mb-8 text-lg">
-        👨‍👩‍👧 Parent's Corner: Customize your child's story adventure!
-      </p>
+      <div className="text-center mb-10">
+        <h2 className="text-4xl md:text-5xl font-bold text-earth-800 mb-4 heading-handwritten">
+          Craft Your Tale
+        </h2>
+        <p className="text-lg md:text-xl text-earth-600 font-display">
+          Tell us about the hero of your story
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         <div>
-          <label className="block text-xl font-bold text-gray-700 mb-2">
-            👋 Child's Name
+          <label className="flex items-center gap-2 text-xl font-bold text-earth-800 mb-3 font-display">
+            <span className="text-2xl">👋</span>
+            Hero's Name
           </label>
           <input
             type="text"
             value={childName}
             onChange={(e) => setChildName(e.target.value)}
-            placeholder="Enter your child's name..."
-            className="w-full px-6 py-4 text-lg rounded-2xl border-4 border-primary-yellow focus:outline-none focus:ring-4 focus:ring-primary-yellow/50"
+            placeholder="Who is the brave adventurer?"
+            className="w-full px-6 py-4 text-lg rounded-xl border-2 border-earth-300 focus:outline-none focus:border-sunset-400 focus:ring-4 focus:ring-sunset-100 bg-white shadow-page font-display transition-all"
             required
           />
         </div>
 
         <div>
-          <label className="block text-xl font-bold text-gray-700 mb-2">
-            🎂 Child's Age
+          <label className="flex items-center gap-2 text-xl font-bold text-earth-800 mb-3 font-display">
+            <span className="text-2xl">🎂</span>
+            Hero's Age
           </label>
           <select
             value={age}
             onChange={(e) => setAge(e.target.value)}
-            className="w-full px-6 py-4 text-lg rounded-2xl border-4 border-primary-green focus:outline-none focus:ring-4 focus:ring-primary-green/50"
+            className="w-full px-6 py-4 text-lg rounded-xl border-2 border-earth-300 focus:outline-none focus:border-sage-400 focus:ring-4 focus:ring-sage-100 bg-white shadow-page font-display transition-all"
             required
           >
-            <option value="">Select age...</option>
+            <option value="">Choose an age...</option>
             {Array.from({ length: 10 }, (_, i) => i + 3).map((a) => (
               <option key={a} value={a}>
                 {a} years old
@@ -113,25 +120,27 @@ export const StoryCreationForm: React.FC<{
         </div>
 
         <div>
-          <label className="block text-xl font-bold text-gray-700 mb-2">
-            💡 Lesson or Moral (Optional)
+          <label className="flex items-center gap-2 text-xl font-bold text-earth-800 mb-3 font-display">
+            <span className="text-2xl">💡</span>
+            Story's Lesson
+            <span className="text-sm font-normal text-earth-500 ml-2">(Optional)</span>
           </label>
           <textarea
             value={lessonOfDay}
             onChange={(e) => setLessonOfDay(e.target.value)}
-            placeholder="What lesson would you like this story to teach? (e.g., 'sharing is caring', 'being kind to others', 'facing your fears')..."
-            className="w-full px-6 py-4 text-lg rounded-2xl border-4 border-primary-pink focus:outline-none focus:ring-4 focus:ring-primary-pink/50 min-h-[100px] resize-y"
+            placeholder="What wisdom should this tale impart? For example: courage, kindness, honesty, friendship..."
+            className="w-full px-6 py-4 text-lg rounded-xl border-2 border-earth-300 focus:outline-none focus:border-lavender-400 focus:ring-4 focus:ring-lavender-100 bg-white shadow-page min-h-[120px] resize-y font-display transition-all"
             rows={3}
           />
-          <p className="text-sm text-gray-500 mt-2">
-            💭 Help guide the story's message. Leave blank for a fun adventure
-            without a specific lesson.
+          <p className="text-sm text-earth-500 mt-2 font-display italic">
+            Leave blank for a pure adventure without a specific moral
           </p>
         </div>
 
         <div>
-          <label className="block text-xl font-bold text-gray-700 mb-4">
-            🌟 Story Theme
+          <label className="flex items-center gap-2 text-xl font-bold text-earth-800 mb-4 font-display">
+            <span className="text-2xl">🌟</span>
+            Story Theme
           </label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {themes.map((theme) => (
@@ -139,16 +148,16 @@ export const StoryCreationForm: React.FC<{
                 key={theme.id}
                 type="button"
                 onClick={() => setSelectedTheme(theme.id)}
-                className={`p-4 rounded-2xl border-4 transition-all ${
+                className={`p-5 rounded-xl border-2 transition-all font-display font-semibold ${
                   selectedTheme === theme.id
-                    ? `${theme.color} text-white border-white scale-105`
-                    : "border-gray-300 hover:border-gray-400 hover:scale-105"
+                    ? `${theme.color} text-white border-white shadow-lg scale-105`
+                    : "bg-white border-earth-300 text-earth-700 hover:border-earth-400 shadow-page"
                 }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05, y: -3 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className="text-3xl mb-2">{theme.emoji}</div>
-                <div className="font-bold">{theme.name}</div>
+                <div className="text-4xl mb-2">{theme.emoji}</div>
+                <div className="font-bold text-lg">{theme.name}</div>
               </motion.button>
             ))}
           </div>
@@ -157,17 +166,20 @@ export const StoryCreationForm: React.FC<{
         <motion.button
           type="submit"
           disabled={loading || !childName || !age}
-          className="w-full playful-button bg-gradient-to-r from-primary-blue via-primary-purple to-primary-pink text-white text-xl disabled:opacity-50"
-          whileHover={{ scale: loading ? 1 : 1.05 }}
-          whileTap={{ scale: loading ? 1 : 0.95 }}
+          className="w-full storybook-button bg-gradient-to-r from-sunset-400 to-sunset-500 hover:from-sunset-500 hover:to-sunset-600 text-white text-xl disabled:opacity-50 disabled:cursor-not-allowed"
+          whileHover={{ scale: loading ? 1 : 1.03 }}
+          whileTap={{ scale: loading ? 1 : 0.98 }}
         >
           {loading ? (
-            <span className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
-              🪄 Creating {generatingCount}/3 Story Options...
+            <span className="flex items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+              <span>Crafting Tale {generatingCount}/3...</span>
             </span>
           ) : (
-            "🎭 Generate 3 Story Options!"
+            <span className="flex items-center justify-center gap-2">
+              <Wand2 className="w-6 h-6" />
+              <span>Generate Three Story Options</span>
+            </span>
           )}
         </motion.button>
       </form>
