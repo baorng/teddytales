@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1",
-    "@liquidmetal-ai/raindrop-framework": "0.12.0",
+    "@liquidmetal-ai/raindrop-framework": "0.13.0",
     "hono": "^4",
     "@hono/zod-validator": "^0.2.2",
     "kysely": "^0.27.2",
