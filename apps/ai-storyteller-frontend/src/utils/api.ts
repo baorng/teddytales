@@ -59,7 +59,7 @@ export class StoryAPI {
 
   static generateImageUrl(storyText: string): string {
     const encodedPrompt = encodeURIComponent(storyText);
-    return `${IMAGE_API_BASE}/${encodedPrompt}?width=1024&height=768&model=flux`;
+    return `${IMAGE_API_BASE}/${encodedPrompt}?width=800&height=320&model=flux`;
   }
 
   static async checkHealth() {

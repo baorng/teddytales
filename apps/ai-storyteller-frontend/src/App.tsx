@@ -10,20 +10,24 @@ function App() {
   const [currentView, setCurrentView] = useState<'welcome' | 'create' | 'story'>('welcome');
   const [story, setStory] = useState<StoryResponse | null>(null);
   const [loading, setLoading] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleStoryCreated = (newStory: StoryResponse) => {
     setStory(newStory);
+    setImageLoaded(false);
     setCurrentView('story');
   };
 
   const handleChoiceMade = (newStory: StoryResponse) => {
     console.log('Choice made callback:', newStory);
     setStory(newStory);
+    setImageLoaded(false);
     setLoading(false);
   };
 
   const handleCreateNew = () => {
     setStory(null);
+    setImageLoaded(false);
     setLoading(false);
     setCurrentView('create');
   };
@@ -160,12 +164,108 @@ function App() {
               className="mb-8 text-center"
             >
               <div className="relative inline-block">
-                <img
-                  src={imageUrl}
-                  alt="Story scene illustration"
-                  className="w-full max-w-2xl h-auto rounded-2xl shadow-lg border-4 border-primary-yellow"
-                  style={{ maxHeight: '400px', objectFit: 'contain' }}
-                />
+                <AnimatePresence mode="wait">
+                  {!imageLoaded ? (
+                    <motion.div
+                      key="placeholder"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="w-[800px] h-[320px] bg-gradient-to-br from-purple-100 via-pink-100 to-yellow-100 rounded-2xl border-4 border-primary-yellow overflow-hidden relative"
+                    >
+                      {/* Swirling colors background */}
+                      <div className="absolute inset-0">
+                        <div className="absolute top-10 left-10 w-32 h-32 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+                        <div className="absolute top-20 right-10 w-40 h-40 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                        <div className="absolute bottom-10 left-20 w-36 h-36 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{ animationDelay: '2s' }}></div>
+                        <div className="absolute bottom-20 right-20 w-28 h-28 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse" style={{ animationDelay: '0.5s' }}></div>
+                      </div>
+                      
+                      {/* Swirling animation */}
+                      <motion.div
+                        className="absolute inset-0"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                      >
+                        <div className="absolute top-1/2 left-1/2 w-64 h-64 -translate-x-1/2 -translate-y-1/2">
+                          <div className="w-full h-full border-4 border-purple-300 rounded-full border-t-transparent border-r-transparent"></div>
+                        </div>
+                      </motion.div>
+                      
+                      <motion.div
+                        className="absolute inset-0"
+                        animate={{ rotate: -360 }}
+                        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                      >
+                        <div className="absolute top-1/2 left-1/2 w-48 h-48 -translate-x-1/2 -translate-y-1/2">
+                          <div className="w-full h-full border-4 border-pink-300 rounded-full border-b-transparent border-l-transparent"></div>
+                        </div>
+                      </motion.div>
+                      
+                      {/* Twinkles */}
+                      {[...Array(8)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-2 h-2 bg-white rounded-full"
+                          style={{
+                            top: `${20 + (i * 10)}%`,
+                            left: `${15 + (i * 10)}%`,
+                          }}
+                          animate={{ 
+                            opacity: [0, 1, 0],
+                            scale: [0, 1.5, 0],
+                          }}
+                          transition={{ 
+                            duration: 2 + (i * 0.3),
+                            repeat: Infinity,
+                            delay: i * 0.2,
+                          }}
+                        />
+                      ))}
+                      
+                      {/* Loading text */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center">
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                            className="text-5xl mb-3"
+                          >
+                            🎨
+                          </motion.div>
+                          <motion.div
+                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+                          >
+                            Creating your magic scene...
+                          </motion.div>
+                          <div className="text-sm text-gray-600 mt-1">✨ Painting wonders ✨</div>
+                        </div>
+                      </div>
+                      
+                      {/* Hidden image to preload */}
+                      <img 
+                        src={imageUrl}
+                        alt="preload"
+                        className="hidden"
+                        onLoad={() => setImageLoaded(true)}
+                        onError={() => console.log('Image failed to load:', imageUrl)}
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.img
+                      key="image"
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      src={imageUrl}
+                      alt="Story scene illustration"
+                      className="w-[800px] h-auto rounded-2xl shadow-lg border-4 border-primary-yellow"
+                      style={{ maxHeight: '400px', objectFit: 'contain' }}
+                    />
+                  )}
+                </AnimatePresence>
                 <div className="absolute -bottom-2 -right-2 text-3xl animate-bounce">
                   ✨
                 </div>
