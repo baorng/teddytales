@@ -15,7 +15,6 @@ function App() {
   const [story, setStory] = useState<StoryResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [contentAnimated, setContentAnimated] = useState(false);
 
   const handleStoriesGenerated = (stories: StoryResponse[]) => {
     // Always show selection page with story options
@@ -26,7 +25,6 @@ function App() {
   const handleStorySelected = (selectedStory: StoryResponse) => {
     setStory(selectedStory);
     setImageLoaded(false);
-    setContentAnimated(false);
     setCurrentView("story");
   };
 
@@ -34,14 +32,12 @@ function App() {
     console.log("Choice made callback:", newStory);
     setStory(newStory);
     setImageLoaded(false);
-    setContentAnimated(false);
     setLoading(false);
   };
 
   const handleCreateNew = () => {
     setStory(null);
     setImageLoaded(false);
-    setContentAnimated(false);
     setLoading(false);
     setCurrentView("create");
   };
@@ -256,36 +252,27 @@ function App() {
               </div>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              onAnimationComplete={() => setContentAnimated(true)}
-              className="mb-8 text-center"
-            >
+            <div className="mb-8 text-center">
               <div className="relative inline-block">
                 <AnimatePresence mode="wait">
                   {!imageLoaded ? (
-                    <motion.div
+                    <div
                       key="placeholder"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="w-[800px] h-[320px] bg-gradient-to-br from-purple-100 via-pink-100 to-yellow-100 rounded-2xl border-4 border-primary-yellow overflow-hidden relative"
+                      className="w-[800px] h-[320px] bg-gradient-to-br from-lavender-100 via-sunset-100 to-sky-100 rounded-2xl border-2 border-earth-300 overflow-hidden relative shadow-page"
                     >
                       {/* Swirling colors background */}
                       <div className="absolute inset-0">
-                        <div className="absolute top-10 left-10 w-32 h-32 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+                        <div className="absolute top-10 left-10 w-32 h-32 bg-lavender-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-pulse"></div>
                         <div
-                          className="absolute top-20 right-10 w-40 h-40 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"
+                          className="absolute top-20 right-10 w-40 h-40 bg-sunset-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-pulse"
                           style={{ animationDelay: "1s" }}
                         ></div>
                         <div
-                          className="absolute bottom-10 left-20 w-36 h-36 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"
+                          className="absolute bottom-10 left-20 w-36 h-36 bg-sky-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-pulse"
                           style={{ animationDelay: "2s" }}
                         ></div>
                         <div
-                          className="absolute bottom-20 right-20 w-28 h-28 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"
+                          className="absolute bottom-20 right-20 w-28 h-28 bg-sage-300 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-pulse"
                           style={{ animationDelay: "0.5s" }}
                         ></div>
                       </div>
@@ -295,13 +282,13 @@ function App() {
                         className="absolute inset-0"
                         animate={{ rotate: 360 }}
                         transition={{
-                          duration: 8,
+                          duration: 10,
                           repeat: Infinity,
                           ease: "linear",
                         }}
                       >
                         <div className="absolute top-1/2 left-1/2 w-64 h-64 -translate-x-1/2 -translate-y-1/2">
-                          <div className="w-full h-full border-4 border-purple-300 rounded-full border-t-transparent border-r-transparent"></div>
+                          <div className="w-full h-full border-4 border-lavender-300 rounded-full border-t-transparent border-r-transparent"></div>
                         </div>
                       </motion.div>
 
@@ -309,40 +296,43 @@ function App() {
                         className="absolute inset-0"
                         animate={{ rotate: -360 }}
                         transition={{
-                          duration: 12,
+                          duration: 15,
                           repeat: Infinity,
                           ease: "linear",
                         }}
                       >
                         <div className="absolute top-1/2 left-1/2 w-48 h-48 -translate-x-1/2 -translate-y-1/2">
-                          <div className="w-full h-full border-4 border-pink-300 rounded-full border-b-transparent border-l-transparent"></div>
+                          <div className="w-full h-full border-4 border-sunset-300 rounded-full border-b-transparent border-l-transparent"></div>
                         </div>
                       </motion.div>
 
                       {/* Twinkles */}
-                      {[...Array(8)].map((_, i) => (
+                      {[...Array(6)].map((_, i) => (
                         <motion.div
                           key={i}
-                          className="absolute w-2 h-2 bg-white rounded-full"
+                          className="absolute text-2xl"
                           style={{
-                            top: `${20 + i * 10}%`,
-                            left: `${15 + i * 10}%`,
+                            top: `${15 + i * 15}%`,
+                            left: `${10 + i * 15}%`,
                           }}
                           animate={{
-                            opacity: [0, 1, 0],
-                            scale: [0, 1.5, 0],
+                            opacity: [0, 0.8, 0],
+                            scale: [0.5, 1.2, 0.5],
+                            rotate: [0, 180, 360],
                           }}
                           transition={{
-                            duration: 2 + i * 0.3,
+                            duration: 2.5 + i * 0.3,
                             repeat: Infinity,
-                            delay: i * 0.2,
+                            delay: i * 0.3,
                           }}
-                        />
+                        >
+                          ✨
+                        </motion.div>
                       ))}
 
                       {/* Loading text */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-center">
+                      <div className="absolute inset-0 flex items-center justify-center z-10">
+                        <div className="text-center bg-cream-50/80 backdrop-blur-sm px-8 py-6 rounded-2xl">
                           <motion.div
                             animate={{ rotate: 360 }}
                             transition={{
@@ -355,14 +345,14 @@ function App() {
                             🎨
                           </motion.div>
                           <motion.div
-                            animate={{ opacity: [0.5, 1, 0.5] }}
+                            animate={{ opacity: [0.6, 1, 0.6] }}
                             transition={{ duration: 2, repeat: Infinity }}
-                            className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent"
+                            className="text-xl font-bold text-earth-800 font-display"
                           >
-                            Creating your magic scene...
+                            Painting your scene...
                           </motion.div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            ✨ Painting wonders ✨
+                          <div className="text-sm text-earth-600 mt-2 font-display">
+                            ✨ Bringing the story to life ✨
                           </div>
                         </div>
                       </div>
@@ -377,44 +367,31 @@ function App() {
                           console.log("Image failed to load:", imageUrl)
                         }
                       />
-                    </motion.div>
+                    </div>
                   ) : (
-                    <motion.img
+                    <img
                       key="image"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
                       src={imageUrl}
                       alt="Story scene illustration"
-                      className="w-[800px] h-auto rounded-2xl shadow-lg border-4 border-primary-yellow"
+                      className="w-[800px] h-auto rounded-2xl shadow-book border-2 border-earth-300"
                       style={{ maxHeight: "400px", objectFit: "contain" }}
                     />
                   )}
                 </AnimatePresence>
-                <div className="absolute -bottom-2 -right-2 text-3xl animate-bounce">
-                  ✨
-                </div>
+                
+                {imageLoaded && (
+                  <div className="absolute -bottom-2 -right-2 text-3xl">
+                    ✨
+                  </div>
+                )}
               </div>
-            </motion.div>
+            </div>
 
-            {contentAnimated ? (
-              <div className="prose prose-lg max-w-none mb-10">
-                <div className="story-text bg-gradient-to-br from-cream-50 to-cream-100 p-8 md:p-10 rounded-xl border-l-4 border-earth-400 shadow-page">
-                  {story.segment_text}
-                </div>
+            <div className="prose prose-lg max-w-none mb-10">
+              <div className="story-text bg-gradient-to-br from-cream-50 to-cream-100 p-8 md:p-10 rounded-xl border-l-4 border-earth-400 shadow-page">
+                {story.segment_text}
               </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                className="prose prose-lg max-w-none mb-10"
-              >
-                <div className="story-text bg-gradient-to-br from-cream-50 to-cream-100 p-8 md:p-10 rounded-xl border-l-4 border-earth-400 shadow-page">
-                  {story.segment_text}
-                </div>
-              </motion.div>
-            )}
+            </div>
 
             <div className="mb-8">
               <AudioPlayer
