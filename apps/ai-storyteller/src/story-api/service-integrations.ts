@@ -1,5 +1,58 @@
 import { SmartSql, SmartMemory } from '@liquidmetal-ai/raindrop-framework';
 
+// // Vultr Inference API integration
+// export class VultrInferenceService {
+//   constructor(private apiKey: string) {}
+
+//   async generateStory(prompt: string): Promise<string> {
+//     console.log('=== VULTR INFERENCE DEBUG ===');
+//     console.log('Prompt:', prompt.substring(0, 200) + '...');
+    
+//     const response = await fetch('https://api.vultrinference.com/v1/chat/completions', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': `Bearer ${this.apiKey}`,
+//       },
+//       body: JSON.stringify({
+//         model: 'llama-3.1-8b-instant',
+//         messages: [{ 
+//           role: 'user', 
+//           content: prompt 
+//         }],
+//         max_tokens: 500,
+//         temperature: 0.7
+//       }),
+//     });
+
+//     console.log('Vultr Inference response status:', response.status);
+    
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.log('Vultr Inference error response:', errorText);
+//       throw new Error(`Vultr Inference API error: ${response.statusText} - ${errorText}`);
+//     }
+
+//     const result = await response.json() as { 
+//       choices: Array<{ message: { content: string } }> 
+//     };
+    
+//     if (!result.choices || result.choices.length === 0) {
+//       throw new Error('No response from Vultr Inference API');
+//     }
+    
+//     const firstChoice = result.choices[0];
+//     if (!firstChoice?.message?.content) {
+//       throw new Error('Empty response from Vultr Inference API');
+//     }
+    
+//     const content = firstChoice.message.content;
+//     console.log('Generated story length:', content.length);
+    
+//     return content;
+//   }
+// }
+
 // ElevenLabs TTS integration
 export class ElevenLabsService {
   constructor(private apiKey: string, private voiceId: string) {}

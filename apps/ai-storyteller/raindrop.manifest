@@ -10,6 +10,10 @@ application "ai-storyteller" {
     secret = true
   }
 
+  env "VULTR_INFERENCE_API_KEY" {
+    secret = true
+  }
+
   // Configuration
   env "STORY_MODEL" {
     default = "llama-3.1-8b-instant"

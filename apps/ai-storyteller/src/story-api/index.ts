@@ -19,6 +19,7 @@ import {
   StoryDatabaseService, 
   StoryMemoryService 
 } from './service-integrations';
+import { inference } from './vultr_inference';
 
 // Helper function for safe logging
 const safeLog = (env: Env | undefined, level: 'info' | 'error', message: string, data?: any) => {
@@ -221,9 +222,9 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
 
     // Generate initial story segment using AI (SmartInference via AI interface)
     const prompt = StoryPrompts.generateInitialStoryPrompt(request);
-    const aiResponse = await env.AI.run(env.STORY_MODEL as any, {
-      prompt: prompt
-    });
+    const aiResponse = await inference(
+      prompt
+    );
 
     if (!aiResponse || !aiResponse.response) {
       throw new Error('AI model returned invalid response');
@@ -231,7 +232,8 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
 
     let storyData;
     try {
-      const content = aiResponse.response;
+      // const content = aiResponse.response;
+      const content = aiResponse;
       // Parse simplified format: STORY: [text] CHOICE: [question]
       const storyMatch = content.match(/STORY:\s*(.+?)(?=CHOICE:|$)/s);
       const choiceMatch = content.match(/CHOICE:\s*(.+)/s);
