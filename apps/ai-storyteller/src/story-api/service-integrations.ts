@@ -495,7 +495,7 @@ export class StoryMemoryService {
       return `Story for ${context.child_name} is just beginning.`;
     }
 
-    let history = `Complete story for ${context.child_name} (age ${context.age}, theme: ${context.theme}):\n\n`;
+    let history = `Complete story for a child (age ${context.age}, theme: ${context.theme}):\n\n`;
     
     context.segments.forEach((segment, index) => {
       history += `Segment ${index + 1}: ${segment.text}`;

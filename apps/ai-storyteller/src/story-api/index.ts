@@ -206,7 +206,7 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
     
     // Create new story in database
     const storyId = await dbService.createStory(
-      request.child_name,
+      "Emma",
       request.age,
       request.theme,
       request.lesson_of_day
@@ -214,7 +214,7 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
 
     // COMPELTELY DISABLED: Store child preferences in SmartMemory for future sessions
     // SmartMemory indexing takes 8+ seconds per request, making start-story too slow
-    // await memoryService.storeChildPreferences(request.child_name, {
+    // await memoryService.storeChildPreferences("Emma", {
     //   age: request.age,
     //   favorite_themes: request.theme ? [request.theme] : [],
     //   lessons: request.lesson_of_day ? [request.lesson_of_day] : []
@@ -241,13 +241,13 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
       if (storyMatch) {
         storyData = {
           story_text: storyMatch[1].trim(),
-          choice_question: choiceMatch ? choiceMatch[1].trim() : `What should ${request.child_name} do next?`
+          choice_question: choiceMatch ? choiceMatch[1].trim() : `What should Emma do next?`
         };
       } else {
         // Fallback: use entire response as story
         storyData = {
           story_text: content.trim(),
-          choice_question: `What should ${request.child_name} do next?`
+          choice_question: `What should ${"Emma"} do next?`
         };
       }
     } catch (parseError) {
@@ -257,8 +257,8 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
       });
       // Fallback to simple format
       storyData = {
-        story_text: aiResponse.response || "Once upon a time, " + request.child_name + " went on an adventure!",
-        choice_question: `What should ${request.child_name} do next?`
+        story_text: aiResponse.response || "Once upon a time, Emma went on an adventure!",
+        choice_question: `What should ${"Emma"} do next?`
       };
     }
 
@@ -291,7 +291,7 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
     // SmartMemory indexing takes 8+ seconds per request, making start-story too slow
     // await memoryService.initializeStoryContext(
     //   storyId.toString(),
-    //   request.child_name,
+    //   "Emma",
     //   request.age,
     //   request.theme,
     //   request.lesson_of_day
@@ -319,7 +319,7 @@ app.post('/start-story', zValidator('json', StartStoryRequestSchema), async (c) 
 
     safeLog(env, 'info', 'New story started with SmartInference and ElevenLabs', { 
       story_id: storyId, 
-      child_name: request.child_name,
+      child_name: "Emma",
       age: request.age,
       model_used: env.STORY_MODEL
     });
@@ -374,7 +374,6 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
       
       // Generate continuation using AI even without database
       const prompt = StoryPrompts.generateContinuationPrompt(
-        fallbackContext.child_name,
         fallbackContext.age,
         "Emma was on an amazing adventure.",
         request.audio_blob,
@@ -486,7 +485,6 @@ app.post('/continue-story', zValidator('json', SubmitChoiceRequestSchema), async
 
     // Generate continuation using AI with enhanced context
     const prompt = StoryPrompts.generateContinuationPrompt(
-      storyContext!.child_name,
       storyContext!.age,
       fullStoryHistory,
       request.audio_blob, // This now contains the choice text
@@ -1031,58 +1029,58 @@ app.get('/get-audio/:audioKey', async (c) => {
   }
 });
 
-// Test simple functionality without database
-app.post('/demo-story', async (c) => {
-  try {
-    const request = await c.req.json();
-    const { child_name, age, theme } = request;
+// // Test simple functionality without database
+// app.post('/demo-story', async (c) => {
+//   try {
+//     const request = await c.req.json();
+//     const { child_name, age, theme } = request;
     
-    const env = c.env; // Should be properly bound now
+//     const env = c.env; // Should be properly bound now
     
-    // Generate a simple story using AI
-    const prompt = `Create a very short story for ${child_name}, age ${age}, theme: ${theme || 'adventure'}. Return as JSON: {"story_text": "story here", "choice_question": "choice here"}`;
+//     // Generate a simple story using AI
+//     const prompt = `Create a very short story for ${child_name}, age ${age}, theme: ${theme || 'adventure'}. Return as JSON: {"story_text": "story here", "choice_question": "choice here"}`;
     
-    const aiResponse = await env.AI.run(env.STORY_MODEL as any, {
-      prompt: prompt
-    });
+//     const aiResponse = await env.AI.run(env.STORY_MODEL as any, {
+//       prompt: prompt
+//     });
 
-    if (!aiResponse || !aiResponse.response) {
-      return c.json({ error: 'AI did not respond' }, 500);
-    }
+//     if (!aiResponse || !aiResponse.response) {
+//       return c.json({ error: 'AI did not respond' }, 500);
+//     }
 
-    let storyData;
-    try {
-      storyData = JSON.parse(aiResponse.response);
-    } catch (parseError) {
-      // Fallback to simple format if JSON parsing fails
-      storyData = {
-        story_text: aiResponse.response,
-        choice_question: "Should we continue the adventure?"
-      };
-    }
+//     let storyData;
+//     try {
+//       storyData = JSON.parse(aiResponse.response);
+//     } catch (parseError) {
+//       // Fallback to simple format if JSON parsing fails
+//       storyData = {
+//         story_text: aiResponse.response,
+//         choice_question: "Should we continue the adventure?"
+//       };
+//     }
 
-    return c.json({
-      success: true,
-      demo_story: {
-        child_name,
-        age,
-        theme,
-        story_text: storyData.story_text,
-        choice_question: storyData.choice_question,
-        generated_at: new Date().toISOString(),
-        ai_model: env.STORY_MODEL,
-        environment_fix: '✅ Using Service constructor (environment binding fixed)'
-      }
-    });
+//     return c.json({
+//       success: true,
+//       demo_story: {
+//         child_name,
+//         age,
+//         theme,
+//         story_text: storyData.story_text,
+//         choice_question: storyData.choice_question,
+//         generated_at: new Date().toISOString(),
+//         ai_model: env.STORY_MODEL,
+//         environment_fix: '✅ Using Service constructor (environment binding fixed)'
+//       }
+//     });
 
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return c.json({ 
-      error: 'Demo story failed',
-      details: errorMessage
-    }, 500);
-  }
-});
+//   } catch (error) {
+//     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+//     return c.json({ 
+//       error: 'Demo story failed',
+//       details: errorMessage
+//     }, 500);
+//   }
+// });
 
 // === Service Handler ===
 

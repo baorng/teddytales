@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Request/Response schemas for type safety
 export const StartStoryRequestSchema = z.object({
-  child_name: z.string().min(1, 'Child name is required'),
+  // child_name: z.string().min(1, 'Child name is required'),
   age: z.number().min(1, 'Age must be at least 1').max(12, 'Age must be at most 12'),
   theme: z.string().optional(),
   lesson_of_day: z.string().optional()
@@ -33,19 +33,18 @@ export type SubmitChoiceRequest = z.infer<typeof SubmitChoiceRequestSchema>;
 export class StoryPrompts {
   static generateInitialStoryPrompt(request: StartStoryRequest): string {
     const ageGroup = this.getAgeGroup(request.age);
-    return `Write a short story for ${request.child_name}, age ${request.age}, theme: ${request.theme || 'adventure'}.
+    return `Write a short story for a child aged ${request.age}, theme: ${request.theme || 'adventure'}.
 
-IMPORTANT: You MUST use the name "${request.child_name}" throughout the story. Do NOT use other names like "Emma" or "Timmy".
+IMPORTANT: You MUST use the name Emma for the main character throughout the story. 
 
 Keep it simple, 100 words max. End with a clear choice between two options.
 
 Format:
-STORY: [story text about ${request.child_name}]
-CHOICE: Should ${request.child_name} [short option A] or [short option B]?`;
+STORY: [story text about Emma]
+CHOICE: Should Emma [short option A] or [short option B]?`;
   }
 
   static generateContinuationPrompt(
-    childName: string,
     age: number,
     fullStoryHistory: string,
     currentChoice: string,
@@ -55,16 +54,16 @@ CHOICE: Should ${request.child_name} [short option A] or [short option B]?`;
     const isConclusion = segmentOrder >= 2; // Simple 2-3 segment stories
 
     if (isConclusion) {
-      return `You are continuing an interactive story for ${childName}, age ${age}.
+      return `You are continuing an interactive story for a child aged ${age}.
 
 ${fullStoryHistory}
 
 Current choice made: "${currentChoice}"
 
-IMPORTANT: You MUST use the name "${childName}" throughout the continuation. Do NOT use other names like "Emma" or "Timmy".
+IMPORTANT: You MUST use the name Emma throughout the continuation. 
 
 Story context to remember:
-- Main character: ${childName}
+- Main character: Emma 
 - Other characters: ${narrativeArc.characters_introduced.join(', ')}
 - Locations: ${narrativeArc.locations_visited.join(', ')}
 - Story tone: ${narrativeArc.story_tone}
@@ -73,19 +72,19 @@ Story context to remember:
 Write a short ending (50 words max) based on the current choice. Bring the story to a satisfying conclusion that references the journey so far. Do not repeat the choice in your response.
 
 Format:
-STORY: [ending text about ${childName}]
+STORY: [ending text about Emma]
 CHOICE: null`;
     } else {
-      return `You are continuing an interactive story for ${childName}, age ${age}.
+      return `You are continuing an interactive story for a child aged ${age}.
 
 ${fullStoryHistory}
 
 Current choice made: "${currentChoice}"
 
-IMPORTANT: You MUST use the name "${childName}" throughout the continuation. Do NOT use other names like "Emma" or "Timmy".
+IMPORTANT: You MUST use the name Emma throughout the continuation. 
 
 Story context to remember:
-- Main character: ${childName}
+- Main character: Emma
 - Other characters: ${narrativeArc.characters_introduced.join(', ')}
 - Locations visited: ${narrativeArc.locations_visited.join(', ')}
 - Key events so far: ${narrativeArc.key_events.join(', ')}
@@ -93,11 +92,11 @@ Story context to remember:
 - Story tone: ${narrativeArc.story_tone}
 - Themes: ${narrativeArc.themes_explored.join(', ')}
 
-Write what happens next (100 words max). Reference previous events and locations to create continuity. Introduce a new development that offers ${childName} an interesting decision. Do not repeat the choice text in your response. End with a new choice.
+Write what happens next (100 words max). Reference previous events and locations to create continuity. Introduce a new development that offers Emma an interesting decision. Do not repeat the choice text in your response. End with a new choice.
 
 Format:
-STORY: [continuation text about ${childName}]
-CHOICE: Should ${childName} [short option A] or [short option B]?`;
+STORY: [continuation text about Emma the main character]
+CHOICE: Should Emma [short option A] or [short option B]?`;
     }
   }
 
