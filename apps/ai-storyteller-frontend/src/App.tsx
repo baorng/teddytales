@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { StoryCreationForm } from "./components/StoryCreationForm";
 import { AudioPlayer } from "./components/AudioPlayer";
 import { ChoiceButtons } from "./components/ChoiceButtons";
+import { BackgroundMusic } from "./components/BackgroundMusic";
 import { StoryAPI, type StoryResponse } from "./utils/api";
-import { Sparkles, Wand2, Volume2 } from "lucide-react";
+import { Sparkles, Wand2, Volume2, BookOpen } from "lucide-react";
 
 function App() {
   const [currentView, setCurrentView] = useState<
@@ -142,8 +143,10 @@ function App() {
   );
 
   const CreateStoryPage = () => (
-    <div className="min-h-screen bg-gradient-to-br from-storybook-bg via-yellow-50 to-pink-50 p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-storybook-bg via-yellow-50 to-pink-50 p-8 relative">
+      {/* Background music for form page */}
+      <BackgroundMusic autoPlay={true} />
+      <div className="max-w-4xl mx-auto relative z-10">
         <motion.button
           onClick={() => setCurrentView("welcome")}
           className="mb-6 px-6 py-3 bg-white rounded-full shadow-lg border-2 border-primary-purple font-bold text-primary-purple hover:bg-primary-purple hover:text-white transition-all"
