@@ -1,5 +1,6 @@
 // API client for AI Storyteller backend
 const API_BASE = 'https://ai-storyteller.01kc3t3yy6wkaq6mtc04d4jda0.lmapp.run';
+const IMAGE_API_BASE = 'https://image.pollinations.ai/prompt';
 
 export interface StoryRequest {
   child_name: string;
@@ -54,6 +55,11 @@ export class StoryAPI {
 
   static getAudioUrl(audioKey: string): string {
     return `${API_BASE}/get-audio/${audioKey}`;
+  }
+
+  static generateImageUrl(storyText: string): string {
+    const encodedPrompt = encodeURIComponent(storyText);
+    return `${IMAGE_API_BASE}/${encodedPrompt}?width=1024&height=768&model=flux`;
   }
 
   static async checkHealth() {

@@ -128,6 +128,8 @@ function App() {
   const StoryDisplayPage = () => {
     if (!story) return null;
 
+    const imageUrl = StoryAPI.generateImageUrl(story.segment_text);
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-storybook-bg via-yellow-50 to-pink-50 p-8">
         <div className="max-w-4xl mx-auto">
@@ -150,6 +152,25 @@ function App() {
               </h2>
               <div className="text-2xl text-gray-600">Story #{story.story_id}</div>
             </div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mb-8 text-center"
+            >
+              <div className="relative inline-block">
+                <img
+                  src={imageUrl}
+                  alt="Story scene illustration"
+                  className="w-full max-w-2xl h-auto rounded-2xl shadow-lg border-4 border-primary-yellow"
+                  style={{ maxHeight: '400px', objectFit: 'contain' }}
+                />
+                <div className="absolute -bottom-2 -right-2 text-3xl animate-bounce">
+                  ✨
+                </div>
+              </div>
+            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
