@@ -58,21 +58,22 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ autoPlay = fal
       <audio ref={audioRef} src={musicUrl} />
       
       <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        className="flex gap-2"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        className="flex gap-3"
       >
         <motion.button
           onClick={togglePlay}
-          className="p-4 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all border-2 border-primary-purple"
-          whileHover={{ scale: 1.1 }}
+          className="p-4 bg-cream-50 backdrop-blur-sm rounded-2xl shadow-book hover:shadow-lg transition-all border-2 border-earth-300"
+          whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
           title={isPlaying ? 'Pause music' : 'Play background music'}
         >
           {isPlaying ? (
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+              className="text-2xl"
             >
               🎵
             </motion.div>
@@ -83,18 +84,18 @@ export const BackgroundMusic: React.FC<BackgroundMusicProps> = ({ autoPlay = fal
 
         {isPlaying && (
           <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             onClick={toggleMute}
-            className="p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all border-2 border-primary-pink"
-            whileHover={{ scale: 1.1 }}
+            className="p-3 bg-cream-50 backdrop-blur-sm rounded-2xl shadow-book hover:shadow-lg transition-all border-2 border-earth-300"
+            whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
             title={isMuted ? 'Unmute' : 'Mute'}
           >
             {isMuted ? (
-              <VolumeX className="w-5 h-5 text-gray-600" />
+              <VolumeX className="w-6 h-6 text-earth-600" />
             ) : (
-              <Volume2 className="w-5 h-5 text-gray-600" />
+              <Volume2 className="w-6 h-6 text-earth-600" />
             )}
           </motion.button>
         )}

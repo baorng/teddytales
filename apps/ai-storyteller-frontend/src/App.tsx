@@ -50,109 +50,159 @@ function App() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-br from-storybook-bg via-yellow-50 to-pink-50 p-8"
+      className="min-h-screen bg-gradient-to-br from-cream-100 via-cream-200 to-earth-100 p-4 md:p-8 relative overflow-hidden"
     >
-      <div className="max-w-4xl mx-auto text-center">
+      {/* Decorative elements */}
+      <div className="absolute top-10 left-10 w-32 h-32 opacity-20">
         <motion.div
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="mb-8"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          className="text-6xl"
         >
-          <h1
-            className="text-6xl font-bold text-gray-800 mb-4"
-            style={{ fontFamily: "Fredoka One, cursive" }}
-          >
-            🎭 AI Storyteller ✨
+          ✨
+        </motion.div>
+      </div>
+      <div className="absolute bottom-20 right-20 w-24 h-24 opacity-20">
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          className="text-5xl"
+        >
+          📖
+        </motion.div>
+      </div>
+
+      <div className="max-w-5xl mx-auto text-center relative z-10">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="mb-12"
+        >
+          <h1 className="text-7xl md:text-8xl font-bold text-earth-800 mb-4 heading-handwritten drop-shadow-sm">
+            TeddyTales
           </h1>
-          <p
-            className="text-2xl text-gray-600 mb-8"
-            style={{ fontFamily: "Comic Neue, cursive" }}
-          >
-            Magical Stories Just for You!
-          </p>
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <motion.span
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-4xl"
+            >
+              🧸
+            </motion.span>
+            <p className="text-2xl md:text-3xl text-earth-600 font-display font-semibold">
+              Where Every Story Comes Alive
+            </p>
+            <motion.span
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-4xl"
+            >
+              ✨
+            </motion.span>
+          </div>
         </motion.div>
 
         <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 3, repeat: Infinity }}
-          className="bg-white rounded-3xl shadow-2xl p-12 border-4 border-primary-purple"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+          className="bg-cream-50 page-texture rounded-2xl shadow-book p-8 md:p-12 border-2 border-earth-300 relative"
         >
-          <div className="text-6xl mb-6">📚🌟🎵</div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">
-            Create Magical Stories for Your Child!
+          {/* Book corner ornaments */}
+          <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-earth-400 rounded-tl-2xl"></div>
+          <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-earth-400 rounded-tr-2xl"></div>
+          <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-earth-400 rounded-bl-2xl"></div>
+          <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-earth-400 rounded-br-2xl"></div>
+
+          <motion.div
+            animate={{ y: [0, -5, 0] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="text-6xl mb-6"
+          >
+            📚
+          </motion.div>
+          
+          <h2 className="text-3xl md:text-4xl font-bold text-earth-800 mb-4 font-display">
+            Craft Magical Adventures
           </h2>
-          <p className="text-lg text-gray-500 mb-8">
-            👨‍👩‍👧 Parents: Craft personalized, educational adventures
+          <p className="text-lg md:text-xl text-earth-600 mb-10 font-display">
+            Personalized stories that inspire imagination and teach valuable lessons
           </p>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="p-6 bg-gradient-to-br from-primary-blue/20 to-primary-purple/20 rounded-2xl"
+              whileHover={{ y: -5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="p-6 bg-gradient-to-br from-lavender-50 to-lavender-100 rounded-xl shadow-page border border-lavender-200"
             >
-              <Sparkles className="w-12 h-12 text-primary-purple mx-auto mb-3" />
-              <h3 className="font-bold text-lg mb-2">AI Magic</h3>
-              <p className="text-sm text-gray-600">
-                Personalized stories with custom lessons
+              <Sparkles className="w-14 h-14 text-lavender-600 mx-auto mb-3" />
+              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">AI-Powered Magic</h3>
+              <p className="text-sm text-earth-600 font-display">
+                Unique stories tailored to your child's interests and learning goals
               </p>
             </motion.div>
 
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="p-6 bg-gradient-to-br from-primary-pink/20 to-primary-yellow/20 rounded-2xl"
+              whileHover={{ y: -5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="p-6 bg-gradient-to-br from-sunset-50 to-sunset-100 rounded-xl shadow-page border border-sunset-200"
             >
-              <Volume2 className="w-12 h-12 text-primary-pink mx-auto mb-3" />
-              <h3 className="font-bold text-lg mb-2">Audio Narration</h3>
-              <p className="text-sm text-gray-600">
-                Listen to your story with professional voice
+              <Volume2 className="w-14 h-14 text-sunset-600 mx-auto mb-3" />
+              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">Listen & Learn</h3>
+              <p className="text-sm text-earth-600 font-display">
+                Professional narration brings every adventure to life
               </p>
             </motion.div>
 
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="p-6 bg-gradient-to-br from-primary-green/20 to-primary-blue/20 rounded-2xl"
+              whileHover={{ y: -5 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="p-6 bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl shadow-page border border-sky-200"
             >
-              <Wand2 className="w-12 h-12 text-primary-green mx-auto mb-3" />
-              <h3 className="font-bold text-lg mb-2">Interactive Choices</h3>
-              <p className="text-sm text-gray-600">
-                Choose your own adventure path
+              <Wand2 className="w-14 h-14 text-sky-600 mx-auto mb-3" />
+              <h3 className="font-bold text-xl mb-2 text-earth-800 font-display">Your Choices Matter</h3>
+              <p className="text-sm text-earth-600 font-display">
+                Interactive storytelling where kids shape the adventure
               </p>
             </motion.div>
           </div>
 
           <motion.button
             onClick={() => setCurrentView("create")}
-            className="playful-button bg-gradient-to-r from-primary-blue via-primary-purple to-primary-pink text-white text-2xl px-12 py-6"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            className="storybook-button bg-gradient-to-r from-sunset-400 to-sunset-500 hover:from-sunset-500 hover:to-sunset-600 text-white text-xl md:text-2xl px-10 py-5 rounded-xl"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
           >
-            🚀 Start Your Story!
+            <BookOpen className="inline-block w-6 h-6 mr-2 mb-1" />
+            Begin Your Adventure
           </motion.button>
         </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 text-gray-500 text-sm"
+          transition={{ delay: 0.8 }}
+          className="mt-8 text-earth-500 text-sm font-display"
         >
-          Powered by Raindrop + Vultr AI Services
+          Powered with care by Raindrop & Vultr AI
         </motion.p>
       </div>
     </motion.div>
   );
 
   const CreateStoryPage = () => (
-    <div className="min-h-screen bg-gradient-to-br from-storybook-bg via-yellow-50 to-pink-50 p-8 relative">
+    <div className="min-h-screen bg-gradient-to-br from-cream-100 via-cream-200 to-sage-50 p-4 md:p-8 relative">
       {/* Background music for form page */}
       <BackgroundMusic autoPlay={true} />
       <div className="max-w-4xl mx-auto relative z-10">
         <motion.button
           onClick={() => setCurrentView("welcome")}
-          className="mb-6 px-6 py-3 bg-white rounded-full shadow-lg border-2 border-primary-purple font-bold text-primary-purple hover:bg-primary-purple hover:text-white transition-all"
-          whileHover={{ scale: 1.05 }}
+          className="mb-6 storybook-button bg-earth-100 hover:bg-earth-200 text-earth-700 border-2 border-earth-300"
+          whileHover={{ scale: 1.02, x: -5 }}
         >
-          ← Back to Welcome
+          <span className="text-xl mr-2">←</span>
+          <span className="font-display font-semibold">Back to Home</span>
         </motion.button>
 
         <StoryCreationForm onStoriesGenerated={handleStoriesGenerated} />
@@ -166,30 +216,43 @@ function App() {
     const imageUrl = StoryAPI.generateImageUrl(story.segment_text);
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-storybook-bg via-yellow-50 to-pink-50 p-8">
-        <div className="max-w-4xl mx-auto">
+      <div className="min-h-screen bg-gradient-to-br from-cream-100 via-cream-200 to-earth-100 p-4 md:p-8">
+        <div className="max-w-5xl mx-auto">
           <motion.button
             onClick={handleCreateNew}
-            className="mb-6 px-6 py-3 bg-white rounded-full shadow-lg border-2 border-primary-purple font-bold text-primary-purple hover:bg-primary-purple hover:text-white transition-all"
-            whileHover={{ scale: 1.05 }}
+            className="mb-8 storybook-button bg-earth-100 hover:bg-earth-200 text-earth-700 border-2 border-earth-300"
+            whileHover={{ scale: 1.02, x: -5 }}
           >
-            ← Create New Story
+            <span className="text-xl mr-2">←</span>
+            <span className="font-display font-semibold">Create New Story</span>
           </motion.button>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-2xl p-8 border-4 border-primary-yellow"
+            className="bg-cream-50 page-texture rounded-2xl shadow-book p-6 md:p-10 border-2 border-earth-300 relative"
           >
-            <div className="text-center mb-8">
-              <h2
-                className="text-4xl font-bold text-gray-800 mb-2"
-                style={{ fontFamily: "Fredoka One, cursive" }}
+            {/* Book decorative corners */}
+            <div className="absolute top-0 left-0 w-16 h-16 border-t-4 border-l-4 border-earth-400 rounded-tl-2xl opacity-40"></div>
+            <div className="absolute top-0 right-0 w-16 h-16 border-t-4 border-r-4 border-earth-400 rounded-tr-2xl opacity-40"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 border-b-4 border-l-4 border-earth-400 rounded-bl-2xl opacity-40"></div>
+            <div className="absolute bottom-0 right-0 w-16 h-16 border-b-4 border-r-4 border-earth-400 rounded-br-2xl opacity-40"></div>
+
+            <div className="text-center mb-10">
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="inline-flex items-center gap-3 mb-4"
               >
-                📖 Your Magical Story! ✨
-              </h2>
-              <div className="text-2xl text-gray-600">
-                Story #{story.story_id}
+                <span className="text-4xl">📖</span>
+                <h2 className="text-4xl md:text-5xl font-bold text-earth-800 heading-handwritten">
+                  Your Story Unfolds
+                </h2>
+                <span className="text-4xl">✨</span>
+              </motion.div>
+              <div className="text-lg text-earth-500 font-display">
+                Chapter {story.story_id}
               </div>
             </div>
 
@@ -335,8 +398,8 @@ function App() {
             </motion.div>
 
             {contentAnimated ? (
-              <div className="prose prose-lg max-w-none mb-8">
-                <div className="story-text bg-gradient-to-r from-storybook-bg to-yellow-50 p-8 rounded-2xl border-2 border-storybook-accent">
+              <div className="prose prose-lg max-w-none mb-10">
+                <div className="story-text bg-gradient-to-br from-cream-50 to-cream-100 p-8 md:p-10 rounded-xl border-l-4 border-earth-400 shadow-page">
                   {story.segment_text}
                 </div>
               </div>
@@ -345,9 +408,9 @@ function App() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
-                className="prose prose-lg max-w-none mb-8"
+                className="prose prose-lg max-w-none mb-10"
               >
-                <div className="story-text bg-gradient-to-r from-storybook-bg to-yellow-50 p-8 rounded-2xl border-2 border-storybook-accent">
+                <div className="story-text bg-gradient-to-br from-cream-50 to-cream-100 p-8 md:p-10 rounded-xl border-l-4 border-earth-400 shadow-page">
                   {story.segment_text}
                 </div>
               </motion.div>
@@ -374,87 +437,97 @@ function App() {
   };
 
   const StorySelectionPage = () => (
-    <div className="min-h-screen bg-gradient-to-br from-storybook-bg via-yellow-50 to-pink-50 p-8">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-cream-100 via-cream-200 to-earth-100 p-4 md:p-8">
+      <div className="max-w-7xl mx-auto">
         <motion.button
           onClick={() => setCurrentView("create")}
-          className="mb-6 px-6 py-3 bg-white rounded-full shadow-lg border-2 border-primary-purple font-bold text-primary-purple hover:bg-primary-purple hover:text-white transition-all"
-          whileHover={{ scale: 1.05 }}
+          className="mb-8 storybook-button bg-earth-100 hover:bg-earth-200 text-earth-700 border-2 border-earth-300"
+          whileHover={{ scale: 1.02, x: -5 }}
         >
-          ← Create Different Stories
+          <span className="text-xl mr-2">←</span>
+          <span className="font-display font-semibold">Create Different Stories</span>
         </motion.button>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center mb-12"
         >
-          <h2
-            className="text-4xl font-bold text-gray-800 mb-4"
-            style={{ fontFamily: "Fredoka One, cursive" }}
-          >
-            🎭 Choose Your Story! ✨
+          <h2 className="text-5xl md:text-6xl font-bold text-earth-800 mb-4 heading-handwritten">
+            Choose Your Adventure
           </h2>
-          <p className="text-xl text-gray-600">
-            Pick the one that excites you most!
+          <p className="text-xl md:text-2xl text-earth-600 font-display">
+            Three magical tales await — which path will you take?
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {storyOptions.map((storyOption, index) => {
-            const colors = [
-              "border-primary-blue",
-              "border-primary-purple",
-              "border-primary-pink",
+            const themes = [
+              {
+                bg: "from-sky-50 to-sky-100",
+                border: "border-sky-300",
+                accent: "bg-sky-500",
+                icon: "🌟"
+              },
+              {
+                bg: "from-lavender-50 to-lavender-100",
+                border: "border-lavender-300",
+                accent: "bg-lavender-500",
+                icon: "✨"
+              },
+              {
+                bg: "from-sunset-50 to-sunset-100",
+                border: "border-sunset-300",
+                accent: "bg-sunset-500",
+                icon: "💫"
+              },
             ];
-            const gradients = [
-              "from-blue-50 to-purple-50",
-              "from-purple-50 to-pink-50",
-              "from-pink-50 to-yellow-50",
-            ];
-            const emojis = ["🌟", "✨", "💫"];
-
-            // Get first 200 characters for preview
+            
+            const theme = themes[index];
             const preview =
-              storyOption.segment_text.substring(0, 200) +
-              (storyOption.segment_text.length > 200 ? "..." : "");
+              storyOption.segment_text.substring(0, 180) +
+              (storyOption.segment_text.length > 180 ? "..." : "");
 
             return (
               <motion.div
                 key={storyOption.story_id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`bg-gradient-to-br ${gradients[index]} rounded-3xl shadow-xl border-4 ${colors[index]} p-8 cursor-pointer hover:shadow-2xl transition-all`}
-                whileHover={{ scale: 1.03, y: -5 }}
+                transition={{ delay: index * 0.15 }}
+                whileHover={{ y: -8, transition: { type: "spring", stiffness: 300 } }}
+                className={`bg-gradient-to-br ${theme.bg} page-texture rounded-2xl shadow-book border-2 ${theme.border} p-6 md:p-8 cursor-pointer group relative`}
                 onClick={() => handleStorySelected(storyOption)}
               >
+                {/* Page corner */}
+                <div className="absolute top-0 right-0 w-0 h-0 border-t-[40px] border-t-earth-200 border-l-[40px] border-l-transparent opacity-50"></div>
+                
                 <div className="text-center mb-6">
                   <motion.div
                     className="text-5xl mb-3"
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
+                    animate={{ rotate: [0, 5, -5, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                   >
-                    {emojis[index]}
+                    {theme.icon}
                   </motion.div>
-                  <h3 className="text-3xl font-bold text-gray-800 mb-2">
-                    Story {index + 1}
-                  </h3>
-                  <div className="text-sm text-gray-500 italic">Preview</div>
+                  <div className={`inline-block ${theme.accent} text-white px-4 py-2 rounded-lg mb-2`}>
+                    <span className="font-display font-bold text-lg">Tale {index + 1}</span>
+                  </div>
                 </div>
 
-                <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 mb-6 min-h-[200px]">
-                  <p className="text-base text-gray-700 leading-relaxed">
+                <div className="bg-cream-50/90 backdrop-blur-sm rounded-xl p-5 mb-6 min-h-[220px] border border-earth-200 shadow-inner">
+                  <p className="text-base text-earth-700 leading-relaxed font-story">
                     {preview}
                   </p>
                 </div>
 
                 <motion.button
-                  className="w-full py-4 bg-gradient-to-r from-primary-blue via-primary-purple to-primary-pink text-white font-bold text-lg rounded-xl shadow-lg"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  className={`w-full storybook-button ${theme.accent} hover:opacity-90 text-white font-display text-base md:text-lg`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  📖 Choose & Continue This Story!
+                  <BookOpen className="inline-block w-5 h-5 mr-2 mb-1" />
+                  Read This Story
                 </motion.button>
               </motion.div>
             );
