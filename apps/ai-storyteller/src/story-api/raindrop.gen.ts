@@ -17,4 +17,5 @@ export interface Env {
   tracer: Tracer;
   TTS_VOICE_ID: string;
   VULTR_API_KEY: string;
+  VULTR_INFERENCE_API_KEY: string;
 }

@@ -1,6 +1,4 @@
 // Using native fetch API instead of axios for Cloudflare Workers compatibility
-const API_KEY = "UCWE4Z23MIRB5JK3NYMFQY4OBHUMMBDM3KXA";
-
 interface VultrInferenceResponse {
   choices: Array<{
     message: {
@@ -19,22 +17,28 @@ interface VultrInferenceResponse {
 }
 
 export async function inference(
-  prompt: string
+  prompt: string,
+  apiKey: string
 ): Promise<VultrInferenceResponse | null> {
   try {
     console.log("=== Vultr Inference Request ===");
     console.log("Prompt:", prompt);
     console.log(
       "API Key:",
-      API_KEY ? `${API_KEY.substring(0, 10)}...` : "NOT SET"
+      apiKey ? `${apiKey.substring(0, 10)}...` : "NOT SET"
     );
+
+    if (!apiKey) {
+      console.error("Vultr API key not provided");
+      return null;
+    }
 
     const response = await fetch(
       "https://api.vultrinference.com/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${API_KEY}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({

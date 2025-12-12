@@ -248,7 +248,7 @@ app.post(
 
       // Generate initial story segment using AI (SmartInference via AI interface)
       const prompt = StoryPrompts.generateInitialStoryPrompt(request);
-      const aiResponse = await inference(prompt);
+      const aiResponse = await inference(prompt, env.VULTR_INFERENCE_API_KEY);
 
       if (!aiResponse || !aiResponse.choices || !aiResponse.choices[0]) {
         throw new Error("AI model returned invalid response");
@@ -1009,7 +1009,8 @@ app.get("/test-ai", async (c) => {
     // Test with Vultr inference
     console.log("Testing Vultr inference...");
     const aiResponse = await inference(
-      "Generate a very short children's story about Emma the explorer in 2 sentences."
+      "Generate a very short children's story about Emma the explorer in 2 sentences.",
+      env.VULTR_INFERENCE_API_KEY
     );
 
     console.log("AI response type:", typeof aiResponse);
