@@ -1,0 +1,4 @@
+raindrop build env set VULTR_API_KEY placeholder
+raindrop build env set VULTR_INFERENCE_API_KEY placeholder
+raindrop build env set ELEVENLABS_API_KEY placeholder
+# raindrop build env set ELEVENLABS_API_KEY sk_19a525ba7bb708d748ada4b201b58b986731e3795c8b0df2
