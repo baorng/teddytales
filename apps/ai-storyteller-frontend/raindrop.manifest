@@ -1,0 +1,24 @@
+application "ai-storyteller-frontend" {
+
+  // === Environment Variables ===
+  env "API_BASE_URL" {
+    default = "https://ai-storyteller.01kc3c918xkfv1z281re82g2sz.lmapp.run"
+  }
+
+  // === Storage ===
+  // Store built React assets
+  bucket "frontend-assets" {}
+
+  // === Main Frontend Service ===
+  // HTTP service serving the React app
+  service "web-app" {
+    visibility = "public"
+    domain {
+      cname = "ai-storyteller-frontend"
+    }
+  }
+
+  // === SmartMemory ===
+  // Cache user sessions and story preferences
+  smartmemory "user-sessions" {}
+}
